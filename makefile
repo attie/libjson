@@ -15,6 +15,7 @@ CLINKS:=-fPIC $(addprefix -l,$(LIBS)) $(DEBUG)
 
 #--------#
 
+TESTAPP:=testapp
 LIBNAME:=libjson
 VER_MAJ:=0
 VER_MIN:=0
@@ -32,13 +33,13 @@ OBJS:=$(addprefix $(BUILDDIR)/,$(patsubst %.c,%.o,$(SRCS)))
 
 #--------#
 
-all: $(LIBDIR)/$(LIBNAME).so $(LIBDIR)/$(LIBNAME).a
+all: $(LIBDIR)/$(LIBNAME).so $(LIBDIR)/$(LIBNAME).a $(TESTAPP)
 
 new: clean
 	$(MAKE) --no-print-directory all
 
 clean:
-	rm -rf $(OBJS) $(LIBDIR)/$(LIBNAME).so $(LIBDIR)/$(LIBNAME).so.$(LIB_VER)
+	rm -rf $(OBJS) $(LIBDIR)/$(LIBNAME).so $(LIBDIR)/$(LIBNAME).so.$(LIB_VER) $(TESTAPP)
 
 mrproper:
 	@for i in .*.dir; do \
@@ -68,6 +69,9 @@ $(LIBDIR)/$(LIBNAME).so: .$(LIBDIR).dir $(LIBDIR)/$(LIBNAME).so.$(LIB_VER)
 
 $(LIBDIR)/$(LIBNAME).so.$(LIB_VER): .$(LIBDIR).dir $(OBJS) makefile
 	$(GCC) --shared -Wl,-soname,$(LIBNAME).so.$(LIB_VER) $(CLINKS) $(filter %.o,$^) -o $@
+
+$(TESTAPP): $(OBJS) makefile
+	$(GCC) $(CLINKS) $(filter %.o,$^) -o $@
 
 #--------#
 
