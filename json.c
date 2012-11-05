@@ -1,6 +1,3 @@
-#ifndef __JSON_INT_H
-#define __JSON_INT_H
-
 /*
 	libjson - a C library to parse and construct JSON data structures.
 
@@ -20,41 +17,33 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define EXPORT __attribute__((visibility("default")))
-#include "json.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct json;
-struct json_object;
+#include "json_int.h"
 
-struct json {
-	unsigned char *data;
-	unsigned int length;
+EXPORT json_err json_new(struct json **jsonRet) {
+	struct json *json;
 
-	unsigned int parse_pos;
-	struct json_object *parse_object;
+	if (!jsonRet) return JSON_EMISSINGPARAM;
 
-	struct json_object *head;
-};
+	if ((json = malloc(sizeof(*json))) == NULL) return JSON_ENOMEM;
+	memset(json, 0, sizeof(*json));
 
-struct json_object {
-	struct json *root;
-	struct json_object *parent;
-	struct json_object *sibling_prev;
-	struct json_object *sibling_next;
-	struct json_object *child_head;
+	*jsonRet = json;
 
-	unsigned char *name;
+	return JSON_ENONE;
+}
 
-	enum json_dataTypes type;
-	unsigned int data_len;
-	union {
-		unsigned char *asRaw;
-		int asInt;
-		float asFloat;
-	} data;
-};
+EXPORT json_err json_destory(struct json *json) {
+	if (!json) return JSON_EMISSINGPARAM;
+	
+	if (json->data) free(json->data);
+	if (json->head) json_objectDestroy(json->head);
+	
+	free(json);
 
-json_err json_objectNew(struct json_object **object);
-json_err json_objectDestroy(struct json_object *object);
+	return JSON_ENONE;
+}
 
-#endif /* __JSON_INT_H */
