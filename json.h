@@ -62,10 +62,9 @@ EXPORT json_err json_destroy(struct json *json);
 EXPORT json_err json_isComplete (struct json *json);
 EXPORT json_err json_dataAdd    (struct json *json, unsigned char *data, unsigned int len);
 
-EXPORT json_err json_getType    (struct json *json, unsigned char *identifier, enum json_dataTypes *type);
 EXPORT json_err json_getChildren(struct json *json, unsigned char *identifier, unsigned char **children);
 
-
+EXPORT json_err json_getType    (struct json *json, unsigned char *identifier, enum json_dataTypes *type);
 EXPORT json_err json_addInteger (struct json *json, unsigned char *identifier, int *data);
 EXPORT json_err json_addFloat   (struct json *json, unsigned char *identifier, float *data);
 EXPORT json_err json_addString  (struct json *json, unsigned char *identifier, unsigned char **data);

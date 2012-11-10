@@ -119,6 +119,17 @@ int main(int argc, char *argv[]) {
 	o[6]->type = JSON_INTEGER;
 	o[6]->data.asInt = 599119200;
 
+	{ struct json_object *x;
+		json_objectNew(&x);
+		o[6]->sibling_next = x;
+		x->sibling_prev = o[6];
+		x->root = json;
+		x->parent = o[1];
+		x->name = (unsigned char *)"favNum";
+		x->type = JSON_FLOAT;
+		x->data.asFloat = 6.34;
+	}
+
 	json_objectNew(&o[7]);
 	o[1]->sibling_next = o[7];
 	o[7]->sibling_prev = o[1];
@@ -281,6 +292,7 @@ int main(int argc, char *argv[]) {
 	printf("Data: [%s]\n", target2->data.asRaw);
 #endif
 
+#if 0
 	{
 		unsigned char *a;
 		int b;
@@ -295,6 +307,37 @@ int main(int argc, char *argv[]) {
 		json_printObject(o[10], &a, &b);
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
+	}
+#endif
+
+	{
+		unsigned int i;
+		float f;
+		unsigned char *str;
+
+		if ((ret = json_getArrayLen(json, (unsigned char*)"people", &i)) != JSON_ENONE) {
+			fprintf(stderr, "json_getArrayLen() failed: %d\n", ret);
+			return 1;
+		}
+		printf("array len: %d\n", i);
+
+		if ((ret = json_getString(json, (unsigned char*)"people[0].name.first", &str)) != JSON_ENONE) {
+			fprintf(stderr, "json_getString() failed: %d\n", ret);
+			return 1;
+		}
+		printf("string: '%s'\n", str);
+
+		if ((ret = json_getInteger(json, (unsigned char*)"people[0].dob", &i)) != JSON_ENONE) {
+			fprintf(stderr, "json_getInteger() failed: %d\n", ret);
+			return 1;
+		}
+		printf("int: %d\n", i);
+
+		if ((ret = json_getFloat(json, (unsigned char*)"people[0].favNum", &f)) != JSON_ENONE) {
+			fprintf(stderr, "json_getInteger() failed: %d\n", ret);
+			return 1;
+		}
+		printf("float: %f\n", f);
 	}
 
 	return 0;
