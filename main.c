@@ -22,6 +22,7 @@
 #include <time.h>
 
 #include "json_int.h"
+#include "object.h"
 
 /*
 {

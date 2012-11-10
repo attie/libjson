@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "json_int.h"
+#include "object.h"
 
 json_err json_objectNew(struct json_object **objectRet) {
 	struct json_object *object;

@@ -22,6 +22,8 @@
 #include <string.h>
 
 #include "json_int.h"
+#include "object.h"
+#include "add.h"
 
 json_err json_addElement(struct json_object *root, unsigned char *parent, struct json_object **element, unsigned char *name) {
 	json_err ret;

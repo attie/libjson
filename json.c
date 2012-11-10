@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "json_int.h"
+#include "object.h"
 
 EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
 	json_err ret;
@@ -43,12 +44,6 @@ EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getRoot(struct json *json, struct json_object **root) {
-	if (!json || !root) return JSON_EMISSINGPARAM;
-	*root = json->root;
-	return JSON_ENONE;
-}
-
 EXPORT json_err json_destory(struct json *json) {
 	if (!json) return JSON_EMISSINGPARAM;
 	
@@ -60,3 +55,16 @@ EXPORT json_err json_destory(struct json *json) {
 	return JSON_ENONE;
 }
 
+EXPORT json_err json_getRoot(struct json *json, struct json_object **root) {
+	if (!json || !root) return JSON_EMISSINGPARAM;
+	*root = json->root;
+	return JSON_ENONE;
+}
+
+EXPORT json_err json_isComplete(struct json *json) {
+	return JSON_ENOTIMPLEMENTED;
+}
+
+EXPORT json_err json_dataAdd(struct json *json, unsigned char *data, unsigned int len) {
+	return JSON_ENOTIMPLEMENTED;
+}

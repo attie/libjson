@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "json_int.h"
+#include "object.h"
 
 EXPORT json_err json_getType(struct json_object *root, unsigned char *identifier, enum json_dataTypes *type) {
 	json_err ret;

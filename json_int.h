@@ -69,10 +69,4 @@ struct json_object {
 	} data;
 };
 
-/* object.c */
-json_err json_objectNew(struct json_object **object);
-json_err json_objectDestroy(struct json_object *object);
-json_err json_identifyAsArray(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType);
-json_err json_identifyAsElement(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType);
-
 #endif /* __JSON_INT_H */
