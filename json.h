@@ -67,6 +67,7 @@ EXPORT json_err json_getRoot    (struct json *json, struct json_object **root);
 EXPORT json_err json_isComplete (struct json *json);
 EXPORT json_err json_dataAdd    (struct json *json, unsigned char *data, unsigned int len);
 
+EXPORT json_err json_addNull    (struct json_object *root, unsigned char *parent, unsigned char *name);
 EXPORT json_err json_addBoolean (struct json_object *root, unsigned char *parent, unsigned char *name, int data);
 EXPORT json_err json_addInteger (struct json_object *root, unsigned char *parent, unsigned char *name, int data);
 EXPORT json_err json_addFloat   (struct json_object *root, unsigned char *parent, unsigned char *name, float data);

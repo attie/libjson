@@ -73,6 +73,18 @@ json_err json_addElement(struct json_object *root, unsigned char *parent, struct
 	return JSON_ENONE;
 }
 
+EXPORT json_err json_addNull(struct json_object *root, unsigned char *parent, unsigned char *name) {
+	json_err ret;
+	struct json_object *object;
+
+	if (!root || !parent) return JSON_EMISSINGPARAM;
+	if ((ret = json_addElement(root, parent, &object, name)) != JSON_ENONE) return ret;
+
+	object->type = JSON_NULL;
+
+	return JSON_ENONE;
+}
+
 EXPORT json_err json_addBoolean(struct json_object *root, unsigned char *parent, unsigned char *name, int data) {
 	json_err ret;
 	struct json_object *object;

@@ -47,6 +47,7 @@ json_err _json_printElement(struct json_print_ctx *ctx) {
 	switch (ctx->root->type) {
 		//case JSON_ELEMENT:	ret = _json_printElement(ctx);  break;
 		case JSON_NULL:			ret = _json_printNull(ctx);     break;
+		case JSON_BOOLEAN:	ret = _json_printBoolean(ctx);  break;
 		case JSON_INTEGER:	ret = _json_printInteger(ctx);  break;
 		case JSON_FLOAT:		ret = _json_printFloat(ctx);    break;
 		case JSON_STRING:		ret = _json_printString(ctx);   break;
@@ -78,6 +79,12 @@ json_err _json_printElement(struct json_print_ctx *ctx) {
 json_err _json_printNull(struct json_print_ctx *ctx) {
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
 	json_bufPrintf(ctx->buf, "null");
+	return JSON_ENONE;
+}
+
+json_err _json_printBoolean(struct json_print_ctx *ctx) {
+	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
+	json_bufPrintf(ctx->buf, "%s", (ctx->root->data.asInt?"true":"false"));
 	return JSON_ENONE;
 }
 
