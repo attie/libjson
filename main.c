@@ -214,6 +214,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "%d\n", json_locateObject(json->head, (unsigned char *)"people[ people[ 0 ] . id ]", &target));
 #endif
 	
+#if 0
 	if ((ret = json_locateObject(json->head, (unsigned char *)"people[0].id", &target)) != JSON_ENONE) {
 		fprintf(stderr, "json_locateObject() failed: %d\n", ret);
 		return 1;
@@ -278,6 +279,13 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	printf("Data: [%s]\n", target2->data.asRaw);
+#endif
+
+	{
+		char *a;
+		int b;
+		json_print(json, &a, &b);
+	}
 
 	return 0;
 }

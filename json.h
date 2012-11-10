@@ -73,4 +73,7 @@ EXPORT json_err json_getString  (struct json *json, char *identifier, char **dat
 EXPORT json_err json_getFunction(struct json *json, char *identifier, char **data);
 EXPORT json_err json_getArrayLen(struct json *json, char *identifier, unsigned int *length);
 
+EXPORT json_err json_print(struct json *json, char **output, int *outputLen);
+EXPORT json_err json_printObject(struct json_object *root, char **output, int *outputLen);
+
 #endif /* __JSON_H */
