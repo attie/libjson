@@ -4,3 +4,8 @@
 /lib
 
 /testapp
+
+.*.swp
+
+tags
+cscope.out
