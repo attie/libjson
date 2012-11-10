@@ -39,28 +39,28 @@ json_err _json_printElement(struct json_print_ctx *ctx) {
 
 json_err _json_printNull(struct json_print_ctx *ctx) {
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
-	printf("null");	
+	json_bufPrintf(ctx->buf, "null");
 	return JSON_ENONE;
 }
 
 json_err _json_printInteger(struct json_print_ctx *ctx) {
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
-	printf("%d", ctx->root->data.asInt);
+	json_bufPrintf(ctx->buf, "%d", ctx->root->data.asInt);
 	return JSON_ENONE;
 }
 
 json_err _json_printFloat(struct json_print_ctx *ctx) {
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
-	printf("%f", ctx->root->data.asFloat);
+	json_bufPrintf(ctx->buf, "%f", ctx->root->data.asFloat);
 	return JSON_ENONE;
 }
 
 json_err _json_printString(struct json_print_ctx *ctx) {
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
 	if (ctx->root->data.asRaw) {
-		printf("\"%s\"", ctx->root->data.asRaw);
+		json_bufPrintf(ctx->buf, "\"%s\"", ctx->root->data.asRaw);
 	} else {
-		printf("\"\"");
+		json_bufPrintf(ctx->buf, "\"\"");
 	}
 	return JSON_ENONE;
 }
@@ -80,34 +80,34 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 	if (!o->name) {
 		for (c = 0; c < ctx->tab_depth; c++) {
 #ifdef TAB
-			printf(TAB);
+			json_bufPrintf(ctx->buf, TAB);
 #endif
 		}
 	}
-	printf("{");
+	json_bufPrintf(ctx->buf, "{");
 #ifdef NEW_LINE
-	printf(NEW_LINE);
+	json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 	ctx->tab_depth++;
 
 	for (i = o->child_head; i && i->sibling_prev; i = i->sibling_prev);
 	for (c = 0; i; i = i->sibling_next, c++) {
 		if (c) {
-			printf(",");
+			json_bufPrintf(ctx->buf, ",");
 #ifdef NEW_LINE
-			printf(NEW_LINE);
+			json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 		}
 		{
 			int c;
 			for (c = 0; c < ctx->tab_depth; c++) {
 #ifdef TAB
-				printf(TAB);
+				json_bufPrintf(ctx->buf, TAB);
 #endif
 			}
 		}
 		ctx->root = i;
-		if (i->name) printf("\"%s\":", i->name);
+		if (i->name) json_bufPrintf(ctx->buf, "\"%s\":", i->name);
 		switch (i->type) {
 			case JSON_ELEMENT:	ret = _json_printElement(ctx);  break;
 			case JSON_NULL:			ret = _json_printNull(ctx);     break;
@@ -117,9 +117,9 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 			case JSON_FUNCTION:	ret = _json_printFunction(ctx); break;
 			case JSON_OBJECT:		ret = _json_printObject(ctx);   break;
 			case JSON_ARRAY:
-				printf("[");
+				json_bufPrintf(ctx->buf, "[");
 #ifdef NEW_LINE
-				printf(NEW_LINE);
+				json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 				ctx->tab_depth++;
 				ret = _json_printArray(ctx);
@@ -128,11 +128,11 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 					int c;
 					for (c = 0; c < ctx->tab_depth; c++) {
 #ifdef TAB
-						printf(TAB);
+						json_bufPrintf(ctx->buf, TAB);
 #endif
 					}
 				}
-				printf("]");
+				json_bufPrintf(ctx->buf, "]");
 				break;
 			default:						return JSON_EUNKNOWN;
 		}
@@ -141,14 +141,14 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 
 	ctx->tab_depth--;
 #ifdef NEW_LINE
-	printf(NEW_LINE);
+	json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 	for (c = 0; c < ctx->tab_depth; c++) {
 #ifdef TAB
-		printf(TAB);
+		json_bufPrintf(ctx->buf, TAB);
 #endif
 	}
-	printf("}");
+	json_bufPrintf(ctx->buf, "}");
 	ctx->root = o;
 
 	return JSON_ENONE;
@@ -165,16 +165,16 @@ json_err _json_printArray(struct json_print_ctx *ctx) {
 	for (i = o->child_head; i && i->sibling_prev; i = i->sibling_prev);
 	for (c = 0; i; i = i->sibling_next, c++) {
 		if (c) {
-			printf(",");
+			json_bufPrintf(ctx->buf, ",");
 #ifdef NEW_LINE
-			printf(NEW_LINE);
+			json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 		}
 		ctx->root = i;
 		if ((ret = _json_printObject(ctx)) != JSON_ENONE) return ret;
 	}
 #ifdef NEW_LINE
-	printf(NEW_LINE);
+	json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 
 	ctx->root = o;
@@ -203,7 +203,7 @@ EXPORT json_err json_printObject(struct json_object *root, char **output, int *o
 		return ret;
 	}
 #ifdef NEW_LINE
-	printf(NEW_LINE);
+	json_bufPrintf(ctx->buf, NEW_LINE);
 #endif
 
 	json_bufTrim(&buf);

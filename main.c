@@ -285,6 +285,8 @@ int main(int argc, char *argv[]) {
 		char *a;
 		int b;
 		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
 	}
 
 	return 0;
