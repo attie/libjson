@@ -26,7 +26,19 @@ struct json_buf {
 	char *data;
 };
 
+/* these will add BUF_EXPAND_SIZE / 'extra' bytes to the buffer */
 json_err json_bufExpand(struct json_buf *buf);
+json_err json_bufnExpand(struct json_buf *buf, size_t extra);
+
+/* ensure that there are at least 'extra' bytes avaliable pas pos in the buffer */
+json_err json_bufSpace(struct json_buf *buf, size_t extra);
+
+/* print to the buffer! like printf() */
+json_err json_bufPrintf(struct json_buf *buf, const char *format, ...);
+json_err json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap);
+json_err _json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap, int recurse);
+
+/* trim the buffer to pos (which should point to the terminating NUL) */
 json_err json_bufTrim(struct json_buf *buf);
 
 #endif /* __BUF_H */
