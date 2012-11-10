@@ -23,7 +23,7 @@
 struct json_buf {
 	int len;
 	int pos;
-	char *data;
+	unsigned char *data;
 };
 
 /* these will add BUF_EXPAND_SIZE / 'extra' bytes to the buffer */

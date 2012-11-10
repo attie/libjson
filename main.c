@@ -282,22 +282,16 @@ int main(int argc, char *argv[]) {
 #endif
 
 	{
-		char *a;
+		unsigned char *a;
 		int b;
 		json_print(json, &a, &b);
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
-	}
-	{
-		char *a;
-		int b;
+
 		json_printObject(o[7], &a, &b);
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
-	}
-	{
-		char *a;
-		int b;
+
 		json_printObject(o[10], &a, &b);
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
