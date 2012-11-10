@@ -24,12 +24,18 @@
 #include "json_int.h"
 
 EXPORT json_err json_new(struct json **jsonRet) {
+	json_err ret;
 	struct json *json;
+	struct json_object *head;
 
 	if (!jsonRet) return JSON_EMISSINGPARAM;
 
+	if ((ret = json_objectNew(&head)) != JSON_ENONE) return ret;
 	if ((json = malloc(sizeof(*json))) == NULL) return JSON_ENOMEM;
 	memset(json, 0, sizeof(*json));
+	json->head = head;
+	head->root = json;
+	head->type = JSON_OBJECT;
 
 	*jsonRet = json;
 
