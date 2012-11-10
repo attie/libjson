@@ -20,6 +20,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "json_int.h"
 #include "object.h"
@@ -55,6 +61,36 @@ int main(int argc, char *argv[]) {
 	unsigned char **children;
 	unsigned int i;
 
+	json_new(&json, NULL);
+	
+	{
+		json_err ret;
+		int fd;
+		unsigned char inBuf[128];
+		int nBytes;
+		
+		if ((fd = open("./testdata.dat", O_RDONLY)) < 0) {
+			fprintf(stderr, "open(): %d - '%s'\n", fd, strerror(errno));
+			return 1;
+		}
+		
+		while ((nBytes = read(fd, inBuf, sizeof(inBuf))) > 0) {
+			if ((ret = json_dataAdd(json, inBuf, nBytes)) != JSON_ENONE && ret != JSON_ECOMPLETE && ret != JSON_EINCOMPLETE) {
+				fprintf(stderr, "json_dataAdd() failed: %d\n", ret);
+			}
+		}
+		
+		close(fd);
+	}
+	
+	json_print(json, &out, &outLen);
+	printf("out:>\n%s<\n", out);
+	printf("outLen:%d\n", outLen);
+	free(out);
+	
+	json_destroy(json);
+	
+#if 0
 	json_new(&json, &root);
 
 	json_addString(root, "", "request", "none", 4);
@@ -79,6 +115,7 @@ int main(int argc, char *argv[]) {
 	free(children);
 	
 	json_destroy(json);
+#endif
 	
 #if 0
 	json_err ret;

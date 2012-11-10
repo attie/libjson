@@ -37,6 +37,7 @@ enum json_errors {
 
 	JSON_EMISSING = -5,
 	JSON_EINCOMPLETE = -6,
+	JSON_ECOMPLETE = -7,
 	JSON_EINVAL = -8,
 
 	JSON_ENOTIMPLEMENTED = -9,
@@ -65,7 +66,7 @@ EXPORT json_err json_new        (struct json **json, struct json_object **root);
 EXPORT json_err json_destroy    (struct json *json);
 EXPORT json_err json_getRoot    (struct json *json, struct json_object **root);
 EXPORT json_err json_isComplete (struct json *json);
-EXPORT json_err json_dataAdd    (struct json *json, unsigned char *data, unsigned int len);
+EXPORT json_err json_dataAdd    (struct json *json, const unsigned char *data, unsigned int len);
 
 EXPORT json_err json_addNull    (struct json_object *root, unsigned char *parent, unsigned char *name);
 EXPORT json_err json_addBoolean (struct json_object *root, unsigned char *parent, unsigned char *name, int data);

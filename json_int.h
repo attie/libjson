@@ -22,9 +22,13 @@
 
 #define EXPORT __attribute__((visibility("default")))
 #define LH() fprintf(stderr, "%s:%d %s()\n", __FILE__, __LINE__, __FUNCTION__)
+
 #include "json.h"
+#include "buf.h"
 
 struct json;
+struct json_parse;
+struct json_parseState;
 struct json_object;
 
 enum identifierType {
@@ -41,13 +45,26 @@ enum characterType {
 	CHAR_DOT,
 };
 
+struct json_parseState {
+	unsigned int s_name;
+	unsigned int e_name;
+	unsigned int q_name; /* quoted? 2 = yes, 1 = no, 0 = unknown */
+	unsigned int i_colon;
+	unsigned int s_value;
+	unsigned int e_value;
+	unsigned int q_value; /* quoted? 2 = yes, 1 = no, 0 = unknown */
+};
+
+struct json_parse {
+	json_err err;
+	struct json_buf buf;
+	unsigned int pos;
+	struct json_object *element;
+	struct json_parseState state;
+};
+
 struct json {
-	unsigned char *data;
-	unsigned int length;
-
-	unsigned int parse_pos;
-	struct json_object *parse_object;
-
+	struct json_parse parse;
 	struct json_object *root;
 };
 

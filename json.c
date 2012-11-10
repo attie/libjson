@@ -34,6 +34,7 @@ EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
 	if ((ret = json_objectNew(&root)) != JSON_ENONE) return ret;
 	if ((json = malloc(sizeof(*json))) == NULL) return JSON_ENOMEM;
 	memset(json, 0, sizeof(*json));
+	json->parse.err = JSON_ENONE;
 	json->root = root;
 	root->json = json;
 	root->type = JSON_OBJECT;
@@ -47,7 +48,7 @@ EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
 EXPORT json_err json_destroy(struct json *json) {
 	if (!json) return JSON_EMISSINGPARAM;
 	
-	if (json->data) free(json->data);
+	if (json->parse.buf.data) free(json->parse.buf.data);
 	if (json->root) json_objectDestroy(json->root);
 	
 	free(json);
@@ -62,9 +63,5 @@ EXPORT json_err json_getRoot(struct json *json, struct json_object **root) {
 }
 
 EXPORT json_err json_isComplete(struct json *json) {
-	return JSON_ENOTIMPLEMENTED;
-}
-
-EXPORT json_err json_dataAdd(struct json *json, unsigned char *data, unsigned int len) {
 	return JSON_ENOTIMPLEMENTED;
 }
