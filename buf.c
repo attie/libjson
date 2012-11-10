@@ -106,10 +106,10 @@ json_err json_bufTrim(struct json_buf *buf) {
 
 	if (!buf) return JSON_EMISSINGPARAM;
 
-	if ((nBuf = realloc(buf->data, buf->pos)) == NULL) return JSON_ENOMEM;
+	if ((nBuf = realloc(buf->data, buf->pos + 1)) == NULL) return JSON_ENOMEM;
 
 	buf->data = nBuf;
-	buf->len = buf->pos;
+	buf->len = buf->pos + 1;
 
 	return JSON_ENONE;
 }
