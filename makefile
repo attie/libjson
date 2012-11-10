@@ -10,7 +10,7 @@ SRCS:=$(wildcard *.c)
 LIBS:=
 
 DEBUG:=-g
-CFLAGS:=-Wall -c -fPIC $(DEBUG) $(addprefix -D,$(OPTIONS)) -fvisibility=hidden -Wstrict-prototypes -Wno-variadic-macros
+CFLAGS:=-Wall -c -fPIC $(DEBUG) $(addprefix -D,$(OPTIONS)) -fvisibility=hidden -Wstrict-prototypes -Wno-variadic-macros -Wno-pointer-sign
 CLINKS:=-fPIC $(addprefix -l,$(LIBS)) $(DEBUG)
 
 #--------#
