@@ -23,7 +23,7 @@
 
 #include "json_int.h"
 
-EXPORT json_err json_getType (struct json *json, unsigned char *identifier, enum json_dataTypes *type) {
+EXPORT json_err json_getType(struct json *json, unsigned char *identifier, enum json_dataTypes *type) {
 	json_err ret;
 	struct json_object *target;
 
@@ -64,21 +64,22 @@ EXPORT json_err json_getFloat(struct json *json, unsigned char *identifier, floa
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getString(struct json *json, unsigned char *identifier, unsigned char **data) {
+EXPORT json_err json_getString(struct json *json, unsigned char *identifier, unsigned char **data, unsigned int *dataLen) {
 	json_err ret;
 	struct json_object *target;
 
-	if (!json || !json->head || !identifier || !data) return JSON_EMISSINGPARAM;
+	if (!json || !json->head || !identifier || !data || !dataLen) return JSON_EMISSINGPARAM;
 	if ((ret = json_locateObject(json->head, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 	if (target->type != JSON_STRING) return JSON_ETYPEMISMATCH;
 
 	*data = target->data.asRaw;
+	*dataLen = target->data_len;
 
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getFunction(struct json *json, unsigned char *identifier, unsigned char **data) {
+EXPORT json_err json_getFunction(struct json *json, unsigned char *identifier, unsigned char **data, unsigned int *dataLen) {
 	return JSON_ENOTIMPLEMENTED;
 }
 
@@ -106,7 +107,7 @@ EXPORT json_err json_getObject(struct json *json, unsigned char *identifier, str
 	if ((ret = json_locateObject(json->head, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 
-	*targetRet = target;
+	if (targetRet) *targetRet = target;
 
 	return JSON_ENONE;
 }

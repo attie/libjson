@@ -310,22 +310,24 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
+#if 0
 	{
-		unsigned int i;
+		unsigned int l;
+		int i;
 		float f;
 		unsigned char *str;
 
-		if ((ret = json_getArrayLen(json, (unsigned char*)"people", &i)) != JSON_ENONE) {
+		if ((ret = json_getArrayLen(json, (unsigned char*)"people", &l)) != JSON_ENONE) {
 			fprintf(stderr, "json_getArrayLen() failed: %d\n", ret);
 			return 1;
 		}
-		printf("array len: %d\n", i);
+		printf("array len: %u\n", l);
 
-		if ((ret = json_getString(json, (unsigned char*)"people[0].name.first", &str)) != JSON_ENONE) {
+		if ((ret = json_getString(json, (unsigned char*)"people[0].name.first", &str, &l)) != JSON_ENONE) {
 			fprintf(stderr, "json_getString() failed: %d\n", ret);
 			return 1;
 		}
-		printf("string: '%s'\n", str);
+		printf("string[%u]: '%s'\n", l, str);
 
 		if ((ret = json_getInteger(json, (unsigned char*)"people[0].dob", &i)) != JSON_ENONE) {
 			fprintf(stderr, "json_getInteger() failed: %d\n", ret);
@@ -339,6 +341,82 @@ int main(int argc, char *argv[]) {
 		}
 		printf("float: %f\n", f);
 	}
+#endif
+
+#if 1
+	{
+		unsigned char *a;
+		struct json_object *o;
+		int b;
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addInteger(json, "people[0]", "funny", 0)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addFloat(json, "people[0]", "test", 5.23)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addString(json, "people[0]", "test2", "hello", 5)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addArray(json, "people[0]", "test3", &o)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addString(json, "people[0].test3", NULL, "iscool", 6)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addObject(json, "people[0]", "test4", &o)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+		if ((ret = json_addString(json, "people[0].test4", "attie", "iscool", 6)) != JSON_ENONE) {
+			fprintf(stderr, "json_add*() failed: %d\n", ret);
+			return 1;
+		};
+
+		json_print(json, &a, &b);
+		printf("b = %d\n", b);
+		printf(">>\n%s\n<<", a);
+
+	}
+#endif
 
 	return 0;
 }

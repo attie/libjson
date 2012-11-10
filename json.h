@@ -41,6 +41,11 @@ enum json_errors {
 	JSON_EINVAL = -8,
 
 	JSON_ENOTIMPLEMENTED = -9,
+
+	/* this error occurs when you try to add a named item to an array - you should be using an object */
+	JSON_EPARENTISARRAY = -10,
+
+	JSON_EEXISTS = -11,
 };
 typedef enum json_errors json_err;
 
@@ -62,21 +67,22 @@ EXPORT json_err json_destroy(struct json *json);
 EXPORT json_err json_isComplete (struct json *json);
 EXPORT json_err json_dataAdd    (struct json *json, unsigned char *data, unsigned int len);
 
-EXPORT json_err json_getChildren(struct json *json, unsigned char *identifier, unsigned char **children);
-
-EXPORT json_err json_getType    (struct json *json, unsigned char *identifier, enum json_dataTypes *type);
-EXPORT json_err json_addInteger (struct json *json, unsigned char *identifier, int *data);
-EXPORT json_err json_addFloat   (struct json *json, unsigned char *identifier, float *data);
-EXPORT json_err json_addString  (struct json *json, unsigned char *identifier, unsigned char **data);
-EXPORT json_err json_addFunction(struct json *json, unsigned char *identifier, unsigned char **data);
-EXPORT json_err json_addArray   (struct json *json, unsigned char *identifier, unsigned int *length);
+EXPORT json_err json_addInteger (struct json *json, unsigned char *identifier, unsigned char *name, int data);
+EXPORT json_err json_addFloat   (struct json *json, unsigned char *identifier, unsigned char *name, float data);
+EXPORT json_err json_addString  (struct json *json, unsigned char *identifier, unsigned char *name, unsigned char *data, unsigned int dataLen);
+EXPORT json_err json_addFunction(struct json *json, unsigned char *identifier, unsigned char *name, unsigned char *data, unsigned int dataLen);
+EXPORT json_err json_addObject  (struct json *json, unsigned char *identifier, unsigned char *name, struct json_object **object);
+EXPORT json_err json_addArray   (struct json *json, unsigned char *identifier, unsigned char *name, struct json_object **object);
 
 EXPORT json_err json_locateObject(struct json_object *root, unsigned char *identifier, struct json_object **target);
 
+EXPORT json_err json_getType    (struct json *json, unsigned char *identifier, enum json_dataTypes *type);
+EXPORT json_err json_getChildren(struct json *json, unsigned char *identifier, unsigned char **children);
+
 EXPORT json_err json_getInteger (struct json *json, unsigned char *identifier, int *data);
 EXPORT json_err json_getFloat   (struct json *json, unsigned char *identifier, float *data);
-EXPORT json_err json_getString  (struct json *json, unsigned char *identifier, unsigned char **data);
-EXPORT json_err json_getFunction(struct json *json, unsigned char *identifier, unsigned char **data);
+EXPORT json_err json_getString  (struct json *json, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
+EXPORT json_err json_getFunction(struct json *json, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
 EXPORT json_err json_getArrayLen(struct json *json, unsigned char *identifier, unsigned int *length);
 EXPORT json_err json_getObject  (struct json *json, unsigned char *identifier, struct json_object **target);
 
