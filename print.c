@@ -33,8 +33,37 @@
 #endif
 
 json_err _json_printElement(struct json_print_ctx *ctx) {
+	json_err ret;
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
-	return JSON_ENONE;
+	switch (ctx->root->type) {
+		//case JSON_ELEMENT:	ret = _json_printElement(ctx);  break;
+		case JSON_NULL:			ret = _json_printNull(ctx);     break;
+		case JSON_INTEGER:	ret = _json_printInteger(ctx);  break;
+		case JSON_FLOAT:		ret = _json_printFloat(ctx);    break;
+		case JSON_STRING:		ret = _json_printString(ctx);   break;
+		case JSON_FUNCTION:	ret = _json_printFunction(ctx); break;
+		case JSON_OBJECT:		ret = _json_printObject(ctx);   break;
+		case JSON_ARRAY:
+			json_bufPrintf(ctx->buf, "[");
+#ifdef NEW_LINE
+			json_bufPrintf(ctx->buf, NEW_LINE);
+#endif
+			ctx->tab_depth++;
+			ret = _json_printArray(ctx);
+			ctx->tab_depth--;
+			{
+				int c;
+				for (c = 0; c < ctx->tab_depth; c++) {
+#ifdef TAB
+					json_bufPrintf(ctx->buf, TAB);
+#endif
+				}
+			}
+			json_bufPrintf(ctx->buf, "]");
+			break;
+		default:						return JSON_EUNKNOWN;
+	}
+	return ret;
 }
 
 json_err _json_printNull(struct json_print_ctx *ctx) {
@@ -108,35 +137,7 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 		}
 		ctx->root = i;
 		if (i->name) json_bufPrintf(ctx->buf, "\"%s\":", i->name);
-		switch (i->type) {
-			case JSON_ELEMENT:	ret = _json_printElement(ctx);  break;
-			case JSON_NULL:			ret = _json_printNull(ctx);     break;
-			case JSON_INTEGER:	ret = _json_printInteger(ctx);  break;
-			case JSON_FLOAT:		ret = _json_printFloat(ctx);    break;
-			case JSON_STRING:		ret = _json_printString(ctx);   break;
-			case JSON_FUNCTION:	ret = _json_printFunction(ctx); break;
-			case JSON_OBJECT:		ret = _json_printObject(ctx);   break;
-			case JSON_ARRAY:
-				json_bufPrintf(ctx->buf, "[");
-#ifdef NEW_LINE
-				json_bufPrintf(ctx->buf, NEW_LINE);
-#endif
-				ctx->tab_depth++;
-				ret = _json_printArray(ctx);
-				ctx->tab_depth--;
-				{
-					int c;
-					for (c = 0; c < ctx->tab_depth; c++) {
-#ifdef TAB
-						json_bufPrintf(ctx->buf, TAB);
-#endif
-					}
-				}
-				json_bufPrintf(ctx->buf, "]");
-				break;
-			default:						return JSON_EUNKNOWN;
-		}
-		if (ret != JSON_ENONE) return ret;
+		if ((ret = _json_printElement(ctx)) != JSON_ENONE) return ret;
 	}
 
 	ctx->tab_depth--;
@@ -171,7 +172,7 @@ json_err _json_printArray(struct json_print_ctx *ctx) {
 #endif
 		}
 		ctx->root = i;
-		if ((ret = _json_printObject(ctx)) != JSON_ENONE) return ret;
+		if ((ret = _json_printElement(ctx)) != JSON_ENONE) return ret;
 	}
 #ifdef NEW_LINE
 	json_bufPrintf(ctx->buf, NEW_LINE);
@@ -198,7 +199,7 @@ EXPORT json_err json_printObject(struct json_object *root, char **output, int *o
 	ctx.root = root;
 	ctx.buf = &buf;
 
-	if ((ret = _json_printObject(&ctx)) != JSON_ENONE) {
+	if ((ret = _json_printElement(&ctx)) != JSON_ENONE) {
 		if (buf.data) free(buf.data);
 		return ret;
 	}
