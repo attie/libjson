@@ -44,7 +44,7 @@ EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_destory(struct json *json) {
+EXPORT json_err json_destroy(struct json *json) {
 	if (!json) return JSON_EMISSINGPARAM;
 	
 	if (json->data) free(json->data);

@@ -38,20 +38,22 @@ json_err json_objectNew(struct json_object **objectRet) {
 }
 
 json_err json_objectDestroy(struct json_object *object) {
-	struct json_object *sibling, *sibling2;
-
 	if (!object) return JSON_EMISSINGPARAM;
 
-	/* locate the left-most sibling */
-	for (sibling = object->sibling_prev; sibling->sibling_prev; sibling = sibling->sibling_prev);
-	/* destroy from left to right, stepping over us! */
-	sibling2 = (sibling ? sibling->sibling_next : NULL);
-	for (; sibling; sibling = sibling2, sibling2 = sibling->sibling_next) {
-		if (sibling != object) json_objectDestroy(sibling);
-	}
-
+	/* destroy all the children */
 	if (object->child_head) json_objectDestroy(object->child_head);
 
+	/* remove each sibling to either side */
+	if (object->sibling_prev) {
+		object->sibling_prev->sibling_next = NULL;
+		json_objectDestroy(object->sibling_prev);
+	}
+	if (object->sibling_next) {
+		object->sibling_next->sibling_prev = NULL;
+		json_objectDestroy(object->sibling_next);
+	}
+
+	/* finally, destroy us */
 	if (object->name) free(object->name);
 	switch (object->type) {
 		case JSON_STRING:
@@ -59,6 +61,7 @@ json_err json_objectDestroy(struct json_object *object) {
 			if (object->data.asRaw) free(object->data.asRaw);
 		default:;
 	}
+	free(object);
 	
 	return JSON_ENONE;
 }

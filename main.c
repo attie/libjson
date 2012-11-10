@@ -70,13 +70,16 @@ int main(int argc, char *argv[]) {
 
 	printf("out:>\n%s<\n", out);
 	printf("outLen:%d\n", outLen);
+	free(out);
 	
 	json_getChildren(root, "", &children);
 	for (i = 0; children[i]; i++) {
 		printf("Child[%d]: '%s'\n", i, children[i]);
 	}
 	free(children);
-
+	
+	json_destroy(json);
+	
 #if 0
 	json_err ret;
 
