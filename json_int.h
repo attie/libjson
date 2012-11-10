@@ -21,6 +21,7 @@
 */
 
 #define EXPORT __attribute__((visibility("default")))
+#define LH() fprintf(stderr, "%s:%d %s()\n", __FILE__, __LINE__, __FUNCTION__)
 #include "json.h"
 
 struct json;
