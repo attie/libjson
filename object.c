@@ -234,7 +234,10 @@ EXPORT json_err json_locateObject(struct json_object *root, unsigned char *ident
 	/* skip over the white space */
 	for (t = identifier; *t == ' '; t++);
 	
-	if (*t == '[') { /* handle the array identifier */
+	if (*t == '\0') {
+		if (targetRet) *targetRet = root;
+		return JSON_ENONE;
+	} else if (*t == '[') { /* handle the array identifier */
 		/* for simplicity, this will not resolve strings or floating point numbers, it will ONLY handle positive integer indexes
 		   if you want to dig into an object, then use a freaking dot */
 		unsigned int index;
