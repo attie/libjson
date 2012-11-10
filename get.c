@@ -31,7 +31,7 @@ EXPORT json_err json_getType(struct json_object *root, unsigned char *identifier
 	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 
-	*type = target->type;
+	if (type) *type = target->type;
 
 	return JSON_ENONE;
 }
