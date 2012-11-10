@@ -25,7 +25,7 @@
 #include "print.h"
 #include "buf.h"
 
-#define PRINT_WHITESPACE
+//#define PRINT_WHITESPACE
 
 #ifdef PRINT_WHITESPACE
 #define NEW_LINE "\n"
