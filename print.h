@@ -28,6 +28,7 @@ struct json_print_ctx {
 
 json_err _json_printElement(struct json_print_ctx *ctx);
 json_err _json_printNull(struct json_print_ctx *ctx);
+json_err _json_printBoolean(struct json_print_ctx *ctx);
 json_err _json_printInteger(struct json_print_ctx *ctx);
 json_err _json_printFloat(struct json_print_ctx *ctx);
 json_err _json_printString(struct json_print_ctx *ctx);
