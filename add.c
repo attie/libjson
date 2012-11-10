@@ -31,7 +31,6 @@ json_err json_addElement(struct json *json, unsigned char *identifier, struct js
 
 	if (!json || !json->head || !identifier || !element) return JSON_EMISSINGPARAM;
 	if ((ret = json_getObject(json, identifier, &target)) != JSON_ENONE) return ret;
-	printf("type: %d\n", target->type);
 	switch (target->type) {
 		case JSON_OBJECT:
 			if (!name) return JSON_EMISSINGPARAM;
