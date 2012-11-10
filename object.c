@@ -62,20 +62,6 @@ json_err json_objectDestroy(struct json_object *object) {
 	return JSON_ENONE;
 }
 
-enum identifierType {
-	ID_INVALID,
-	ID_NUMBER,
-	ID_IDENTIFIER,
-};
-
-enum characterType {
-	CHAR_NONE,
-	CHAR_SPACE,
-	CHAR_NUMERIC,
-	CHAR_NONNUMERIC,
-	CHAR_DOT,
-};
-
 json_err json_identifyAsArray(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType) {
 	unsigned char *t;
 	unsigned char *startOfWord;
@@ -86,13 +72,7 @@ json_err json_identifyAsArray(unsigned char *identifier, unsigned char **identif
 	unsigned int dots;
 	unsigned int nonNumeric;
 	unsigned int canBeIdentifier;
-	enum {
-		CHAR_NONE,
-		CHAR_SPACE,
-		CHAR_NUMERIC,
-		CHAR_NONNUMERIC,
-		CHAR_DOT,
-	} charType;
+	enum characterType charType;
 	
 	*idType = ID_INVALID;
 	
@@ -219,105 +199,5 @@ json_err json_identifyAsElement(unsigned char *identifier, unsigned char **ident
 	
 	if (*identifierEnd < *identifierStart) return JSON_EINVAL;
 	
-	return JSON_ENONE;
-}
-
-EXPORT json_err json_locateObject(struct json_object *root, unsigned char *identifier, struct json_object **targetRet) {
-	json_err ret;
-	unsigned char *identifierStart, *identifierEnd;
-	enum identifierType idType;
-	unsigned char *t;
-	struct json_object *target;
-
-	if (!root || !identifier) return JSON_EMISSINGPARAM;
-	
-	/* skip over the white space */
-	for (t = identifier; *t == ' '; t++);
-	
-	if (*t == '\0') {
-		if (targetRet) *targetRet = root;
-		return JSON_ENONE;
-	} else if (*t == '[') { /* handle the array identifier */
-		/* for simplicity, this will not resolve strings or floating point numbers, it will ONLY handle positive integer indexes
-		   if you want to dig into an object, then use a freaking dot */
-		unsigned int index;
-		
-		t++;
-		
-		if ((ret = json_identifyAsArray(t, &identifierStart, &identifierEnd, &idType)) != JSON_ENONE) return ret;
-		
-		switch (idType) {
-			case ID_INVALID: return JSON_EINVAL;
-			
-			case ID_NUMBER: { /* simple offset, counting from zero being the left-most sibling */
-				unsigned int ret;
-				unsigned char *pIndex;
-				unsigned char *q;
-
-				/* make space */
-				if ((pIndex = malloc(sizeof(*pIndex) * (identifierEnd - identifierStart + 2))) == NULL) return JSON_ENOMEM;
-				
-				/* copy the string in, and terminate */
-				for (t = identifierStart, q = pIndex; t <= identifierEnd; *q = *t, t++, q++);
-				*q = '\0';
-				
-				/* try to pull out the integer */
-				ret = sscanf((char *)pIndex, "%u", &index);
-				free(pIndex);
-				if (ret != 1) return JSON_EINVAL;
-				
-				break;
-			}
-			case ID_IDENTIFIER: /* needs to be evaluated... */
-#warning TODO - for simplicity im pretending that this path doesnt exist... maybe later
-				return JSON_ENOTIMPLEMENTED;
-				break;
-		}
-
-		/* find the left-most sibling */
-		for (target = root->child_head; target && target->sibling_prev; target = target->sibling_prev);
-		/* iterate to the indexed child */
-		for (; index > 0 && target; index--, target = target->sibling_next);
-		
-		/* check that we actually found something */
-		if (index != 0) return JSON_EMISSING;
-		if (*identifierEnd != '\0') identifierEnd++;
-		
-	} else {
-		if ((ret = json_identifyAsElement(t, &identifierStart, &identifierEnd, &idType)) != JSON_ENONE) return ret;
-		
-		/* find the left-most child */
-		for (target = root->child_head; target && target->sibling_prev; target = target->sibling_prev);
-		
-		/* find the named sibling */
-		for (; target; target = target->sibling_next) {
-			unsigned char *q, *p;
-			
-			/* skip items with no name... */
-			if (!target->name) continue;
-			
-			/* compare the names */
-			for (q = identifierStart, p = target->name; q <= identifierEnd && *q == *p; q++, p++);
-
-			/* check that the match was valid (full against full) */
-			if (q == identifierEnd + 1 && *p == '\0') break;
-		}
-	}
-	
-	/* check that we actually found something */
-	if (!target) return JSON_EMISSING;
-	
-	/* now that we are done with the identifier, move it along before passing it on */
-	if (*identifierEnd != '\0') identifierEnd++;
-	if (*identifierEnd != '\0' && *identifierEnd == '.') identifierEnd++;
-
-	/* if we haven't run through all of the identifiers, then continue! */
-	if (*identifierEnd != '\0') {
-		return json_locateObject(target, identifierEnd, targetRet);
-	}
-
-	/* return the target if they wanted it */
-	if (targetRet) *targetRet = target;
-
 	return JSON_ENONE;
 }

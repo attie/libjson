@@ -23,22 +23,29 @@
 
 #include "json_int.h"
 
-EXPORT json_err json_new(struct json **jsonRet) {
+EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
 	json_err ret;
 	struct json *json;
-	struct json_object *head;
+	struct json_object *root;
 
 	if (!jsonRet) return JSON_EMISSINGPARAM;
 
-	if ((ret = json_objectNew(&head)) != JSON_ENONE) return ret;
+	if ((ret = json_objectNew(&root)) != JSON_ENONE) return ret;
 	if ((json = malloc(sizeof(*json))) == NULL) return JSON_ENOMEM;
 	memset(json, 0, sizeof(*json));
-	json->head = head;
-	head->root = json;
-	head->type = JSON_OBJECT;
+	json->root = root;
+	root->json = json;
+	root->type = JSON_OBJECT;
 
 	*jsonRet = json;
+	if (rootRet) *rootRet = root;
 
+	return JSON_ENONE;
+}
+
+EXPORT json_err json_getRoot(struct json *json, struct json_object **root) {
+	if (!json || !root) return JSON_EMISSINGPARAM;
+	*root = json->root;
 	return JSON_ENONE;
 }
 
@@ -46,7 +53,7 @@ EXPORT json_err json_destory(struct json *json) {
 	if (!json) return JSON_EMISSINGPARAM;
 	
 	if (json->data) free(json->data);
-	if (json->head) json_objectDestroy(json->head);
+	if (json->root) json_objectDestroy(json->root);
 	
 	free(json);
 

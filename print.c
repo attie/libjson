@@ -25,7 +25,7 @@
 #include "print.h"
 #include "buf.h"
 
-//#define PRINT_WHITESPACE
+#define PRINT_WHITESPACE
 
 #ifdef PRINT_WHITESPACE
 #define NEW_LINE "\n"
@@ -186,7 +186,7 @@ json_err _json_printArray(struct json_print_ctx *ctx) {
 }
 
 EXPORT json_err json_print(struct json *json, unsigned char **output, unsigned int *outputLen) {
-	return json_printObject(json->head, output, outputLen);
+	return json_printObject(json->root, output, outputLen);
 }
 
 EXPORT json_err json_printObject(struct json_object *root, unsigned char **output, unsigned int *outputLen) {

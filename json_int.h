@@ -27,6 +27,20 @@
 struct json;
 struct json_object;
 
+enum identifierType {
+	ID_INVALID,
+	ID_NUMBER,
+	ID_IDENTIFIER,
+};
+
+enum characterType {
+	CHAR_NONE,
+	CHAR_SPACE,
+	CHAR_NUMERIC,
+	CHAR_NONNUMERIC,
+	CHAR_DOT,
+};
+
 struct json {
 	unsigned char *data;
 	unsigned int length;
@@ -34,11 +48,11 @@ struct json {
 	unsigned int parse_pos;
 	struct json_object *parse_object;
 
-	struct json_object *head;
+	struct json_object *root;
 };
 
 struct json_object {
-	struct json *root;
+	struct json *json;
 	struct json_object *parent;
 	struct json_object *sibling_prev;
 	struct json_object *sibling_next;
@@ -55,7 +69,10 @@ struct json_object {
 	} data;
 };
 
+/* object.c */
 json_err json_objectNew(struct json_object **object);
 json_err json_objectDestroy(struct json_object *object);
+json_err json_identifyAsArray(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType);
+json_err json_identifyAsElement(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType);
 
 #endif /* __JSON_INT_H */

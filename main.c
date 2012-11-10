@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "json_int.h"
 
@@ -47,19 +48,20 @@
 
 int main(int argc, char *argv[]) {
 	struct json *json;
+	struct json_object *root;
 	unsigned char *out;
 	unsigned int outLen;
 
-	json_new(&json);
+	json_new(&json, &root);
 
-	json_addString(json, "", "request", "none", 4);
-	json_addInteger(json, "", "time", time());
-	json_addArray(json, "", "parameters", NULL);
-	json_addArray(json, "parameters", NULL, NULL);
-	json_addArray(json, "parameters[0]", NULL, NULL);
-	json_addArray(json, "parameters[0][0]", NULL, NULL);
-	json_addObject(json, "parameters", NULL, NULL);
-	json_addString(json, "parameters[1]", "uri", "/index.htm", 10);
+	json_addString(root, "", "request", "none", 4);
+	json_addInteger(root, "", "time", time(NULL));
+	json_addArray(root, "", "parameters", NULL);
+	json_addArray(root, "parameters", NULL, NULL);
+	json_addArray(root, "parameters[0]", NULL, NULL);
+	json_addArray(root, "parameters[0][0]", NULL, NULL);
+	json_addObject(root, "parameters", NULL, NULL);
+	json_addString(root, "parameters[1]", "uri", "/index.htm", 10);
 
 	json_print(json, &out, &outLen);
 
@@ -373,7 +375,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addInteger(json, "people[0]", "funny", 0)) != JSON_ENONE) {
+		if ((ret = json_addInteger(root, "people[0]", "funny", 0)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -382,7 +384,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addFloat(json, "people[0]", "test", 5.23)) != JSON_ENONE) {
+		if ((ret = json_addFloat(root, "people[0]", "test", 5.23)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -391,7 +393,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addString(json, "people[0]", "test2", "hello", 5)) != JSON_ENONE) {
+		if ((ret = json_addString(root, "people[0]", "test2", "hello", 5)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -400,7 +402,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addArray(json, "people[0]", "test3", &o)) != JSON_ENONE) {
+		if ((ret = json_addArray(root, "people[0]", "test3", &o)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -409,7 +411,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addString(json, "people[0].test3", NULL, "iscool", 6)) != JSON_ENONE) {
+		if ((ret = json_addString(root, "people[0].test3", NULL, "iscool", 6)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -418,7 +420,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addObject(json, "people[0]", "test4", &o)) != JSON_ENONE) {
+		if ((ret = json_addObject(root, "people[0]", "test4", &o)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -427,7 +429,7 @@ int main(int argc, char *argv[]) {
 		printf("b = %d\n", b);
 		printf(">>\n%s\n<<", a);
 
-		if ((ret = json_addString(json, "people[0].test4", "attie", "iscool", 6)) != JSON_ENONE) {
+		if ((ret = json_addString(root, "people[0].test4", "attie", "iscool", 6)) != JSON_ENONE) {
 			fprintf(stderr, "json_add*() failed: %d\n", ret);
 			return 1;
 		};
@@ -439,6 +441,6 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
-	return 0;
 #endif
+	return 0;
 }

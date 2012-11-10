@@ -23,18 +23,18 @@
 
 #include "json_int.h"
 
-json_err json_addElement(struct json *json, unsigned char *identifier, struct json_object **element, unsigned char *name) {
+json_err json_addElement(struct json_object *root, unsigned char *parent, struct json_object **element, unsigned char *name) {
 	json_err ret;
 	struct json_object *target;
 	struct json_object *object;
 	unsigned char *name2;
 
-	if (!json || !json->head || !identifier || !element) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(json, identifier, &target)) != JSON_ENONE) return ret;
+	if (!root || !parent || !element) return JSON_EMISSINGPARAM;
+	if ((ret = json_getObject(root, parent, &target)) != JSON_ENONE) return ret;
 	switch (target->type) {
 		case JSON_OBJECT:
 			if (!name) return JSON_EMISSINGPARAM;
-			if ((ret = json_locateObject(target, name, NULL)) != JSON_EMISSING) return JSON_EEXISTS;
+			if ((ret = json_getObject(target, name, NULL)) != JSON_EMISSING) return JSON_EEXISTS;
 			if ((name2 = malloc(strlen((char*)name) + 1)) == NULL) return JSON_ENOMEM;
 			strcpy((char*)name2, (char*)name);
 			break;
@@ -50,7 +50,7 @@ json_err json_addElement(struct json *json, unsigned char *identifier, struct js
 		if (name2) free(name2);
 		return ret;
 	}
-	object->root = json;
+	object->json = root->json;
 	object->parent = target;
 	object->name = name2;
 
@@ -71,12 +71,12 @@ json_err json_addElement(struct json *json, unsigned char *identifier, struct js
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_addInteger(struct json *json, unsigned char *identifier, unsigned char *name, int data) {
+EXPORT json_err json_addInteger(struct json_object *root, unsigned char *parent, unsigned char *name, int data) {
 	json_err ret;
 	struct json_object *object;
 
-	if (!json || !json->head || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_addElement(json, identifier, &object, name)) != JSON_ENONE) return ret;
+	if (!root || !parent) return JSON_EMISSINGPARAM;
+	if ((ret = json_addElement(root, parent, &object, name)) != JSON_ENONE) return ret;
 
 	object->type = JSON_INTEGER;
 	object->data.asInt = data;
@@ -84,12 +84,12 @@ EXPORT json_err json_addInteger(struct json *json, unsigned char *identifier, un
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_addFloat(struct json *json, unsigned char *identifier, unsigned char *name, float data) {
+EXPORT json_err json_addFloat(struct json_object *root, unsigned char *parent, unsigned char *name, float data) {
 	json_err ret;
 	struct json_object *object;
 
-	if (!json || !json->head || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_addElement(json, identifier, &object, name)) != JSON_ENONE) return ret;
+	if (!root || !parent) return JSON_EMISSINGPARAM;
+	if ((ret = json_addElement(root, parent, &object, name)) != JSON_ENONE) return ret;
 
 	object->type = JSON_FLOAT;
 	object->data.asFloat = data;
@@ -97,17 +97,17 @@ EXPORT json_err json_addFloat(struct json *json, unsigned char *identifier, unsi
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_addString(struct json *json, unsigned char *identifier, unsigned char *name, unsigned char *data, unsigned int dataLen) {
+EXPORT json_err json_addString(struct json_object *root, unsigned char *parent, unsigned char *name, unsigned char *data, unsigned int dataLen) {
 	json_err ret;
 	struct json_object *object;
 	unsigned char *data2;
 
-	if (!json || !json->head || !identifier || !data) return JSON_EMISSINGPARAM;
+	if (!root || !parent || !data) return JSON_EMISSINGPARAM;
 	if ((data2 = malloc(dataLen + 1)) == NULL) return JSON_ENOMEM;
 	memcpy(data2, data, dataLen);
 	data2[dataLen] = '\0';
 
-	if ((ret = json_addElement(json, identifier, &object, name)) != JSON_ENONE) {
+	if ((ret = json_addElement(root, parent, &object, name)) != JSON_ENONE) {
 		free(data2);
 		return ret;
 	}
@@ -119,16 +119,16 @@ EXPORT json_err json_addString(struct json *json, unsigned char *identifier, uns
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_addFunction(struct json *json, unsigned char *identifier, unsigned char *name, unsigned char *data, unsigned int dataLen) {
+EXPORT json_err json_addFunction(struct json_object *root, unsigned char *parent, unsigned char *name, unsigned char *data, unsigned int dataLen) {
 	return JSON_ENOTIMPLEMENTED;
 }
 
-EXPORT json_err json_addObject(struct json *json, unsigned char *identifier, unsigned char *name, struct json_object **objectRet) {
+EXPORT json_err json_addObject(struct json_object *root, unsigned char *parent, unsigned char *name, struct json_object **objectRet) {
 	json_err ret;
 	struct json_object *object;
 
-	if (!json || !json->head || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_addElement(json, identifier, &object, name)) != JSON_ENONE) return ret;
+	if (!root || !parent) return JSON_EMISSINGPARAM;
+	if ((ret = json_addElement(root, parent, &object, name)) != JSON_ENONE) return ret;
 
 	object->type = JSON_OBJECT;
 
@@ -137,12 +137,12 @@ EXPORT json_err json_addObject(struct json *json, unsigned char *identifier, uns
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_addArray(struct json *json, unsigned char *identifier, unsigned char *name, struct json_object **objectRet) {
+EXPORT json_err json_addArray(struct json_object *root, unsigned char *parent, unsigned char *name, struct json_object **objectRet) {
 	json_err ret;
 	struct json_object *object;
 
-	if (!json || !json->head || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_addElement(json, identifier, &object, name)) != JSON_ENONE) return ret;
+	if (!root || !parent) return JSON_EMISSINGPARAM;
+	if ((ret = json_addElement(root, parent, &object, name)) != JSON_ENONE) return ret;
 
 	object->type = JSON_ARRAY;
 
