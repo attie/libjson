@@ -46,6 +46,27 @@
 
 
 int main(int argc, char *argv[]) {
+	struct json *json;
+	unsigned char *out;
+	unsigned int outLen;
+
+	json_new(&json);
+
+	json_addString(json, "", "request", "none", 4);
+	json_addInteger(json, "", "time", time());
+	json_addArray(json, "", "parameters", NULL);
+	json_addArray(json, "parameters", NULL, NULL);
+	json_addArray(json, "parameters[0]", NULL, NULL);
+	json_addArray(json, "parameters[0][0]", NULL, NULL);
+	json_addObject(json, "parameters", NULL, NULL);
+	json_addString(json, "parameters[1]", "uri", "/index.htm", 10);
+
+	json_print(json, &out, &outLen);
+
+	printf("out:>\n%s<\n", out);
+	printf("outLen:%d\n", outLen);
+
+#if 0
 	json_err ret;
 
 	struct json *json;
@@ -419,4 +440,5 @@ int main(int argc, char *argv[]) {
 #endif
 
 	return 0;
+#endif
 }
