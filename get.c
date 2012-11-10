@@ -36,6 +36,51 @@ EXPORT json_err json_getType(struct json_object *root, unsigned char *identifier
 	return JSON_ENONE;
 }
 
+EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identifier, unsigned char ***childrenRet) {
+	json_err ret;
+	struct json_object *target;
+	struct json_object *child, *cFirst;
+	
+	int i;
+	size_t memSize;
+	unsigned char **cList;
+	unsigned char *cName;
+
+	if (!root || !identifier) return JSON_EMISSINGPARAM;
+	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if (!target) return JSON_EMISSING;
+
+	/* locate the left most child */
+	for (child = target->child_head; child && child->sibling_prev; child = child->sibling_prev);
+	if (!child) return JSON_EMISSING;
+	cFirst = child;
+
+	memSize = 0;
+	for (i = 0; child; child = child->sibling_next) {
+		if (!child->name) continue;
+		memSize += sizeof(char *);
+		memSize += sizeof(char) * (strlen(child->name) + 1);
+		i++;
+	}
+	memSize += sizeof(char *);
+
+	if ((cList = malloc(memSize)) == NULL) return JSON_ENOMEM;
+	
+	cName = (char *)&(cList[i+1]);
+	for (i = 0, child = cFirst; child; child = child->sibling_next) {
+		if (!child->name) continue;
+		cList[i] = cName;
+		strcpy(cName, child->name);
+		cName += strlen(cName) + 1;
+		i++;
+	}
+	cList[i] = NULL;
+	
+	*childrenRet = cList;
+	
+	return JSON_ENONE;
+}
+
 EXPORT json_err json_getInteger(struct json_object *root, unsigned char *identifier, int *data) {
 	json_err ret;
 	struct json_object *target;

@@ -74,7 +74,7 @@ EXPORT json_err json_addObject  (struct json_object *root, unsigned char *parent
 EXPORT json_err json_addArray   (struct json_object *root, unsigned char *parent, unsigned char *name, struct json_object **object);
 
 EXPORT json_err json_getType    (struct json_object *root, unsigned char *identifier, enum json_dataTypes *type);
-EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identifier, unsigned char **children);
+EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identifier, unsigned char ***children);
 
 EXPORT json_err json_getInteger (struct json_object *root, unsigned char *identifier, int *data);
 EXPORT json_err json_getFloat   (struct json_object *root, unsigned char *identifier, float *data);

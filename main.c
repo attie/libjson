@@ -51,6 +51,8 @@ int main(int argc, char *argv[]) {
 	struct json_object *root;
 	unsigned char *out;
 	unsigned int outLen;
+	unsigned char **children;
+	unsigned int i;
 
 	json_new(&json, &root);
 
@@ -67,6 +69,12 @@ int main(int argc, char *argv[]) {
 
 	printf("out:>\n%s<\n", out);
 	printf("outLen:%d\n", outLen);
+	
+	json_getChildren(root, "", &children);
+	for (i = 0; children[i]; i++) {
+		printf("Child[%d]: '%s'\n", i, children[i]);
+	}
+	free(children);
 
 #if 0
 	json_err ret;
