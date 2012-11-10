@@ -34,7 +34,16 @@
 
 json_err _json_printElement(struct json_print_ctx *ctx) {
 	json_err ret;
+	int c;
+
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
+	if (ctx->root->parent && ctx->root->parent->type == JSON_ARRAY) {
+		for (c = 0; c < ctx->tab_depth; c++) {
+#ifdef TAB
+			json_bufPrintf(ctx->buf, TAB);
+#endif
+		}
+	}
 	switch (ctx->root->type) {
 		//case JSON_ELEMENT:	ret = _json_printElement(ctx);  break;
 		case JSON_NULL:			ret = _json_printNull(ctx);     break;
@@ -106,13 +115,6 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
 	o = ctx->root;
-	if (!o->name) {
-		for (c = 0; c < ctx->tab_depth; c++) {
-#ifdef TAB
-			json_bufPrintf(ctx->buf, TAB);
-#endif
-		}
-	}
 	json_bufPrintf(ctx->buf, "{");
 #ifdef NEW_LINE
 	json_bufPrintf(ctx->buf, NEW_LINE);
@@ -204,7 +206,7 @@ EXPORT json_err json_printObject(struct json_object *root, unsigned char **outpu
 		return ret;
 	}
 #ifdef NEW_LINE
-	json_bufPrintf(ctx->buf, NEW_LINE);
+	json_bufPrintf(ctx.buf, NEW_LINE);
 #endif
 
 	json_bufTrim(&buf);
