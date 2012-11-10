@@ -33,10 +33,13 @@ json_err json_bufnExpand(struct json_buf *buf, size_t extra);
 /* ensure that there are at least 'extra' bytes avaliable pas pos in the buffer */
 json_err json_bufSpace(struct json_buf *buf, size_t extra);
 
+/* add the given data to the end of the buffer */
+json_err json_bufImport(struct json_buf *buf, const unsigned char *data, unsigned int len);
+
 /* print to the buffer! like printf() */
-json_err json_bufPrintf(struct json_buf *buf, const char *format, ...);
-json_err json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap);
-json_err _json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap, int recurse);
+json_err json_bufPrintf(struct json_buf *buf, const unsigned char *format, ...);
+json_err json_bufvPrintf(struct json_buf *buf, const unsigned char *format, va_list ap);
+json_err _json_bufvPrintf(struct json_buf *buf, const unsigned char *format, va_list ap, int recurse);
 
 /* trim the buffer to pos (which should point to the terminating NUL) */
 json_err json_bufTrim(struct json_buf *buf);

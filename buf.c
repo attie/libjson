@@ -57,7 +57,22 @@ json_err json_bufSpace(struct json_buf *buf, size_t extra) {
 	return json_bufnExpand(buf, nBytes - buf->len);
 }
 
-json_err json_bufPrintf(struct json_buf *buf, const char *format, ...) {
+json_err json_bufImport(struct json_buf *buf, const unsigned char *data, unsigned int len) {
+	json_err ret;
+	
+	if (!buf || !data) return JSON_EMISSINGPARAM;
+	if (len == 0) return JSON_ENONE;
+	
+	if ((ret = json_bufSpace(buf, len)) != JSON_ENONE) return ret;
+	
+	memcpy(&(buf->data[buf->pos]), data, len);
+	buf->pos += len;
+	buf->data[buf->pos] = '\0';
+	
+	return JSON_ENONE;
+}
+
+json_err json_bufPrintf(struct json_buf *buf, const unsigned char *format, ...) {
 	json_err ret;
 	va_list ap;
 
@@ -68,11 +83,11 @@ json_err json_bufPrintf(struct json_buf *buf, const char *format, ...) {
 	return ret;
 }
 
-json_err json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap) {
+json_err json_bufvPrintf(struct json_buf *buf, const unsigned char *format, va_list ap) {
 	return _json_bufvPrintf(buf, format, ap, 1);
 }
 
-json_err _json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap, int recurse) {
+json_err _json_bufvPrintf(struct json_buf *buf, const unsigned char *format, va_list ap, int recurse) {
 	json_err ret;
 	va_list ap2;
 	unsigned int space, printed;
