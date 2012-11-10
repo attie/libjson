@@ -82,6 +82,20 @@ EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identi
 	return JSON_ENONE;
 }
 
+EXPORT json_err json_getBoolean(struct json_object *root, unsigned char *identifier, int *data) {
+	json_err ret;
+	struct json_object *target;
+
+	if (!root || !identifier || !data) return JSON_EMISSINGPARAM;
+	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if (!target) return JSON_EMISSING;
+	if (target->type != JSON_BOOLEAN) return JSON_ETYPEMISMATCH;
+
+	*data = !!target->data.asInt;
+
+	return JSON_ENONE;
+}
+
 EXPORT json_err json_getInteger(struct json_object *root, unsigned char *identifier, int *data) {
 	json_err ret;
 	struct json_object *target;
