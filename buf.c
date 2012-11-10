@@ -32,7 +32,7 @@ json_err json_bufExpand(struct json_buf *buf) {
 }
 json_err json_bufnExpand(struct json_buf *buf, size_t extra) {
 	unsigned char *nBuf;
-	int nBufLen;
+	unsigned int nBufLen;
 
 	if (!buf) return JSON_EMISSINGPARAM;
 
@@ -47,7 +47,7 @@ json_err json_bufnExpand(struct json_buf *buf, size_t extra) {
 }
 
 json_err json_bufSpace(struct json_buf *buf, size_t extra) {
-	int nBytes;
+	unsigned int nBytes;
 
 	if (!buf) return JSON_EMISSINGPARAM;
 
@@ -75,7 +75,8 @@ json_err json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap) {
 json_err _json_bufvPrintf(struct json_buf *buf, const char *format, va_list ap, int recurse) {
 	json_err ret;
 	va_list ap2;
-	int space, printed, needed;
+	unsigned int space, printed;
+	int needed;
 
 	space = buf->len - buf->pos;
 	va_copy(ap2, ap);

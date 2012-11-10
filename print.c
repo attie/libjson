@@ -185,11 +185,11 @@ json_err _json_printArray(struct json_print_ctx *ctx) {
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_print(struct json *json, unsigned char **output, int *outputLen) {
+EXPORT json_err json_print(struct json *json, unsigned char **output, unsigned int *outputLen) {
 	return json_printObject(json->head, output, outputLen);
 }
 
-EXPORT json_err json_printObject(struct json_object *root, unsigned char **output, int *outputLen) {
+EXPORT json_err json_printObject(struct json_object *root, unsigned char **output, unsigned int *outputLen) {
 	json_err ret;
 	struct json_buf buf;
 	struct json_print_ctx ctx;

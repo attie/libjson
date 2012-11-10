@@ -21,8 +21,8 @@
 */
 
 struct json_buf {
-	int len;
-	int pos;
+	unsigned int len;
+	unsigned int pos;
 	unsigned char *data;
 };
 
