@@ -132,7 +132,7 @@ EXPORT json_err json_addObject(struct json *json, unsigned char *identifier, uns
 
 	object->type = JSON_OBJECT;
 
-	*objectRet = object;
+	if (objectRet) *objectRet = object;
 
 	return JSON_ENONE;
 }
@@ -146,7 +146,7 @@ EXPORT json_err json_addArray(struct json *json, unsigned char *identifier, unsi
 
 	object->type = JSON_ARRAY;
 
-	*objectRet = object;
+	if (objectRet) *objectRet = object;
 
 	return JSON_ENONE;
 }
