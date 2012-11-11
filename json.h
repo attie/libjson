@@ -25,7 +25,7 @@
 #endif
 
 struct json;
-struct json_object;
+struct json_element;
 
 enum json_errors {
 	JSON_ENONE = 0,	
@@ -62,35 +62,35 @@ enum json_dataTypes {
 	JSON_ARRAY,
 };
 
-EXPORT json_err json_new        (struct json **json, struct json_object **root);
+EXPORT json_err json_new        (struct json **json, struct json_element **root);
 EXPORT json_err json_destroy    (struct json *json);
-EXPORT json_err json_getRoot    (struct json *json, struct json_object **root);
+EXPORT json_err json_getRoot    (struct json *json, struct json_element **root);
 EXPORT json_err json_isComplete (struct json *json);
 EXPORT json_err json_dataAdd    (struct json *json, const unsigned char *data, unsigned int len);
 
-EXPORT json_err json_addNull    (struct json_object *root, unsigned char *parent, unsigned char *name);
-EXPORT json_err json_addBoolean (struct json_object *root, unsigned char *parent, unsigned char *name, int data);
-EXPORT json_err json_addInteger (struct json_object *root, unsigned char *parent, unsigned char *name, int data);
-EXPORT json_err json_addFloat   (struct json_object *root, unsigned char *parent, unsigned char *name, double data);
-EXPORT json_err json_addString  (struct json_object *root, unsigned char *parent, unsigned char *name, unsigned char *data, unsigned int dataLen);
-EXPORT json_err json_addFunction(struct json_object *root, unsigned char *parent, unsigned char *name, unsigned char *data, unsigned int dataLen);
-EXPORT json_err json_addObject  (struct json_object *root, unsigned char *parent, unsigned char *name, struct json_object **object);
-EXPORT json_err json_addArray   (struct json_object *root, unsigned char *parent, unsigned char *name, struct json_object **object);
+EXPORT json_err json_addNull    (struct json_element *root, unsigned char *parent, unsigned char *name);
+EXPORT json_err json_addBoolean (struct json_element *root, unsigned char *parent, unsigned char *name, int data);
+EXPORT json_err json_addInteger (struct json_element *root, unsigned char *parent, unsigned char *name, int data);
+EXPORT json_err json_addFloat   (struct json_element *root, unsigned char *parent, unsigned char *name, double data);
+EXPORT json_err json_addString  (struct json_element *root, unsigned char *parent, unsigned char *name, unsigned char *data, unsigned int dataLen);
+EXPORT json_err json_addFunction(struct json_element *root, unsigned char *parent, unsigned char *name, unsigned char *data, unsigned int dataLen);
+EXPORT json_err json_addObject  (struct json_element *root, unsigned char *parent, unsigned char *name, struct json_element **element);
+EXPORT json_err json_addArray   (struct json_element *root, unsigned char *parent, unsigned char *name, struct json_element **element);
 
-EXPORT json_err json_getType    (struct json_object *root, unsigned char *identifier, enum json_dataTypes *type);
-EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identifier, unsigned char ***children);
+EXPORT json_err json_getType    (struct json_element *root, unsigned char *identifier, enum json_dataTypes *type);
+EXPORT json_err json_getChildren(struct json_element *root, unsigned char *identifier, unsigned char ***children);
 
-EXPORT json_err json_getBoolean (struct json_object *root, unsigned char *identifier, int *data);
-EXPORT json_err json_getInteger (struct json_object *root, unsigned char *identifier, int *data);
-EXPORT json_err json_getFloat   (struct json_object *root, unsigned char *identifier, double *data);
-EXPORT json_err json_getString  (struct json_object *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
-EXPORT json_err json_getFunction(struct json_object *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
-EXPORT json_err json_getArrayLen(struct json_object *root, unsigned char *identifier, unsigned int *length);
-EXPORT json_err json_getObject  (struct json_object *root, unsigned char *identifier, struct json_object **target);
+EXPORT json_err json_getBoolean (struct json_element *root, unsigned char *identifier, int *data);
+EXPORT json_err json_getInteger (struct json_element *root, unsigned char *identifier, int *data);
+EXPORT json_err json_getFloat   (struct json_element *root, unsigned char *identifier, double *data);
+EXPORT json_err json_getString  (struct json_element *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
+EXPORT json_err json_getFunction(struct json_element *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
+EXPORT json_err json_getArrayLen(struct json_element *root, unsigned char *identifier, unsigned int *length);
+EXPORT json_err json_getObject  (struct json_element *root, unsigned char *identifier, struct json_element **target);
 
-EXPORT json_err json_deleteElement(struct json_object *root, unsigned char *identifier);
+EXPORT json_err json_deleteElement(struct json_element *root, unsigned char *identifier);
 
 EXPORT json_err json_print      (struct json *json, unsigned char **output, unsigned int *outputLen);
-EXPORT json_err json_printObject(struct json_object *root, unsigned char **output, unsigned int *outputLen);
+EXPORT json_err json_printElement(struct json_element *root, unsigned char **output, unsigned int *outputLen);
 
 #endif /* __JSON_H */

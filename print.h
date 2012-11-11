@@ -22,7 +22,7 @@
 
 struct json_print_ctx {
 	int tab_depth;
-	struct json_object *root;
+	struct json_element *root;
 	struct json_buf *buf;
 };
 

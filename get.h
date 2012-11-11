@@ -1,5 +1,5 @@
-#ifndef __OBJECT_H
-#define __OBJECT_H
+#ifndef __GET_H
+#define __GET_H
 
 /*
 	libjson - a C library to parse and construct JSON data structures.
@@ -20,9 +20,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-json_err json_objectNew(struct json_object **object);
-json_err json_objectDestroy(struct json_object *object);
-json_err json_identifyAsArray(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType);
-json_err json_identifyAsElement(unsigned char *identifier, unsigned char **identifierStart, unsigned char **identifierEnd, enum identifierType *idType);
+json_err json_getElement(struct json_element *root, unsigned char *identifier, struct json_element **targetRet);
 
-#endif /* __OBJECT_H */
+#endif /* __GET_H */

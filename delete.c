@@ -22,13 +22,15 @@
 #include <string.h>
 
 #include "json_int.h"
+#include "element.h"
+#include "get.h"
 
-EXPORT json_err json_deleteElement(struct json_object *root, unsigned char *identifier) {
+EXPORT json_err json_deleteElement(struct json_element *root, unsigned char *identifier) {
 	json_err ret;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 
 	if (target->parent && target->parent->child_head == target) {
@@ -52,5 +54,5 @@ EXPORT json_err json_deleteElement(struct json_object *root, unsigned char *iden
 	}
 
 	/* we are now completely un-linked... destroy us and all our children */
-	return json_objectDestroy(target);
+	return json_elementDestroy(target);
 }

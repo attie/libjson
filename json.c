@@ -22,16 +22,16 @@
 #include <string.h>
 
 #include "json_int.h"
-#include "object.h"
+#include "element.h"
 
-EXPORT json_err json_new(struct json **jsonRet, struct json_object **rootRet) {
+EXPORT json_err json_new(struct json **jsonRet, struct json_element **rootRet) {
 	json_err ret;
 	struct json *json;
-	struct json_object *root;
+	struct json_element *root;
 
 	if (!jsonRet) return JSON_EMISSINGPARAM;
 
-	if ((ret = json_objectNew(&root)) != JSON_ENONE) return ret;
+	if ((ret = json_elementNew(&root)) != JSON_ENONE) return ret;
 	if ((json = malloc(sizeof(*json))) == NULL) return JSON_ENOMEM;
 	memset(json, 0, sizeof(*json));
 	json->parse.err = JSON_ENONE;
@@ -49,14 +49,14 @@ EXPORT json_err json_destroy(struct json *json) {
 	if (!json) return JSON_EMISSINGPARAM;
 	
 	if (json->parse.buf.data) free(json->parse.buf.data);
-	if (json->root) json_objectDestroy(json->root);
+	if (json->root) json_elementDestroy(json->root);
 	
 	free(json);
 
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getRoot(struct json *json, struct json_object **root) {
+EXPORT json_err json_getRoot(struct json *json, struct json_element **root) {
 	if (!json || !root) return JSON_EMISSINGPARAM;
 	*root = json->root;
 	return JSON_ENONE;

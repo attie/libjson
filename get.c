@@ -22,14 +22,15 @@
 #include <string.h>
 
 #include "json_int.h"
-#include "object.h"
+#include "get.h"
+#include "element.h"
 
-EXPORT json_err json_getType(struct json_object *root, unsigned char *identifier, enum json_dataTypes *type) {
+EXPORT json_err json_getType(struct json_element *root, unsigned char *identifier, enum json_dataTypes *type) {
 	json_err ret;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 
 	if (type) *type = target->type;
@@ -37,10 +38,10 @@ EXPORT json_err json_getType(struct json_object *root, unsigned char *identifier
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identifier, unsigned char ***childrenRet) {
+EXPORT json_err json_getChildren(struct json_element *root, unsigned char *identifier, unsigned char ***childrenRet) {
 	json_err ret;
-	struct json_object *target;
-	struct json_object *child, *cFirst;
+	struct json_element *target;
+	struct json_element *child, *cFirst;
 	
 	int i;
 	size_t memSize;
@@ -48,7 +49,7 @@ EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identi
 	unsigned char *cName;
 
 	if (!root || !identifier) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 
 	/* locate the left most child */
@@ -82,12 +83,12 @@ EXPORT json_err json_getChildren(struct json_object *root, unsigned char *identi
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getBoolean(struct json_object *root, unsigned char *identifier, int *data) {
+EXPORT json_err json_getBoolean(struct json_element *root, unsigned char *identifier, int *data) {
 	json_err ret;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier || !data) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 	if (target->type != JSON_BOOLEAN) return JSON_ETYPEMISMATCH;
 
@@ -96,12 +97,12 @@ EXPORT json_err json_getBoolean(struct json_object *root, unsigned char *identif
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getInteger(struct json_object *root, unsigned char *identifier, int *data) {
+EXPORT json_err json_getInteger(struct json_element *root, unsigned char *identifier, int *data) {
 	json_err ret;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier || !data) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 	if (target->type != JSON_INTEGER) return JSON_ETYPEMISMATCH;
 
@@ -110,12 +111,12 @@ EXPORT json_err json_getInteger(struct json_object *root, unsigned char *identif
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getFloat(struct json_object *root, unsigned char *identifier, double *data) {
+EXPORT json_err json_getFloat(struct json_element *root, unsigned char *identifier, double *data) {
 	json_err ret;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier || !data) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 	if (target->type != JSON_FLOAT) return JSON_ETYPEMISMATCH;
 
@@ -124,12 +125,12 @@ EXPORT json_err json_getFloat(struct json_object *root, unsigned char *identifie
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getString(struct json_object *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen) {
+EXPORT json_err json_getString(struct json_element *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen) {
 	json_err ret;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier || !data || !dataLen) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 	if (target->type != JSON_STRING) return JSON_ETYPEMISMATCH;
 
@@ -139,17 +140,17 @@ EXPORT json_err json_getString(struct json_object *root, unsigned char *identifi
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getFunction(struct json_object *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen) {
+EXPORT json_err json_getFunction(struct json_element *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen) {
 	return JSON_ENOTIMPLEMENTED;
 }
 
-EXPORT json_err json_getArrayLen(struct json_object *root, unsigned char *identifier, unsigned int *length) {
+EXPORT json_err json_getArrayLen(struct json_element *root, unsigned char *identifier, unsigned int *length) {
 	json_err ret;
-	struct json_object *target;
-	struct json_object *child;
+	struct json_element *target;
+	struct json_element *child;
 
 	if (!root || !identifier || !length) return JSON_EMISSINGPARAM;
-	if ((ret = json_getObject(root, identifier, &target)) != JSON_ENONE) return ret;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
 	if (!target) return JSON_EMISSING;
 	if (target->type != JSON_ARRAY) return JSON_ETYPEMISMATCH;
 
@@ -159,12 +160,26 @@ EXPORT json_err json_getArrayLen(struct json_object *root, unsigned char *identi
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getObject(struct json_object *root, unsigned char *identifier, struct json_object **targetRet) {
+EXPORT json_err json_getObject(struct json_element *root, unsigned char *identifier, struct json_element **targetRet) {
+	json_err ret;
+	struct json_element *target;
+
+	if (!root || !identifier || !targetRet) return JSON_EMISSINGPARAM;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
+	if (!target) return JSON_EMISSING;
+	if (target->type != JSON_OBJECT) return JSON_ETYPEMISMATCH;
+
+	*targetRet = target;
+
+	return JSON_ENONE;
+}
+
+json_err json_getElement(struct json_element *root, unsigned char *identifier, struct json_element **targetRet) {
 	json_err ret;
 	unsigned char *identifierStart, *identifierEnd;
 	enum identifierType idType;
 	unsigned char *t;
-	struct json_object *target;
+	struct json_element *target;
 
 	if (!root || !identifier) return JSON_EMISSINGPARAM;
 	
@@ -250,7 +265,7 @@ EXPORT json_err json_getObject(struct json_object *root, unsigned char *identifi
 
 	/* if we haven't run through all of the identifiers, then continue! */
 	if (*identifierEnd != '\0') {
-		return json_getObject(target, identifierEnd, targetRet);
+		return json_getElement(target, identifierEnd, targetRet);
 	}
 
 	/* return the target if they wanted it */

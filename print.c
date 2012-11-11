@@ -118,7 +118,7 @@ json_err _json_printFunction(struct json_print_ctx *ctx) {
 json_err _json_printObject(struct json_print_ctx *ctx) {
 	json_err ret;
 	int c;
-	struct json_object *o, *i;
+	struct json_element *o, *i;
 
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
 	o = ctx->root;
@@ -167,7 +167,7 @@ json_err _json_printObject(struct json_print_ctx *ctx) {
 json_err _json_printArray(struct json_print_ctx *ctx) {
 	json_err ret;
 	int c;
-	struct json_object *o, *i;
+	struct json_element *o, *i;
 
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
 	o = ctx->root;
@@ -193,10 +193,10 @@ json_err _json_printArray(struct json_print_ctx *ctx) {
 }
 
 EXPORT json_err json_print(struct json *json, unsigned char **output, unsigned int *outputLen) {
-	return json_printObject(json->root, output, outputLen);
+	return json_printElement(json->root, output, outputLen);
 }
 
-EXPORT json_err json_printObject(struct json_object *root, unsigned char **output, unsigned int *outputLen) {
+EXPORT json_err json_printElement(struct json_element *root, unsigned char **output, unsigned int *outputLen) {
 	json_err ret;
 	struct json_buf buf;
 	struct json_print_ctx ctx;

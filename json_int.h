@@ -29,7 +29,7 @@
 struct json;
 struct json_parse;
 struct json_parseState;
-struct json_object;
+struct json_element;
 
 enum identifierType {
 	ID_INVALID,
@@ -59,21 +59,21 @@ struct json_parse {
 	json_err err;
 	struct json_buf buf;
 	unsigned int pos;
-	struct json_object *element;
+	struct json_element *element;
 	struct json_parseState state;
 };
 
 struct json {
 	struct json_parse parse;
-	struct json_object *root;
+	struct json_element *root;
 };
 
-struct json_object {
+struct json_element {
 	struct json *json;
-	struct json_object *parent;
-	struct json_object *sibling_prev;
-	struct json_object *sibling_next;
-	struct json_object *child_head;
+	struct json_element *parent;
+	struct json_element *sibling_prev;
+	struct json_element *sibling_next;
+	struct json_element *child_head;
 
 	unsigned char *name;
 

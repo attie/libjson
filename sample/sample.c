@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
 	json_err ret;
 	
 	struct json *json;
-	struct json_object *root;
-	struct json_object *target;
+	struct json_element *root;
+	struct json_element *target;
 	double value;
 	
 	int fd;
@@ -109,8 +109,8 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	/* see... */
-	if ((ret = json_printObject(target, &out, &outLen)) != JSON_ENONE) {
-		fprintf(stderr, "json_print() failed: %d\n", ret);
+	if ((ret = json_printElement(target, &out, &outLen)) != JSON_ENONE) {
+		fprintf(stderr, "json_printElement() failed: %d\n", ret);
 		return 1;
 	}
 	printf("out:>\n%s<\n", out);

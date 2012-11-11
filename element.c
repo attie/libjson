@@ -22,46 +22,51 @@
 #include <string.h>
 
 #include "json_int.h"
-#include "object.h"
+#include "element.h"
 
-json_err json_objectNew(struct json_object **objectRet) {
-	struct json_object *object;
+/* just to clear things up... an ELEMENT is a 'name': 'value' pair.
+   in the case that the parent of an element is an ARRAY, no name is permitted
+   an OBJECT is an ELEMENT with type OBJECT
+*/
 
-	if (!objectRet) return JSON_EMISSINGPARAM;
+json_err json_elementNew(struct json_element **elementRet) {
+	struct json_element *element;
 
-	if ((object = malloc(sizeof(*object))) == NULL) return JSON_ENOMEM;
-	memset(object, 0, sizeof(*object));
+	if (!elementRet) return JSON_EMISSINGPARAM;
 
-	*objectRet = object;
+	if ((element = malloc(sizeof(*element))) == NULL) return JSON_ENOMEM;
+	memset(element, 0, sizeof(*element));
+
+	*elementRet = element;
 
 	return JSON_ENONE;
 }
 
-json_err json_objectDestroy(struct json_object *object) {
-	if (!object) return JSON_EMISSINGPARAM;
+json_err json_elementDestroy(struct json_element *element) {
+	if (!element) return JSON_EMISSINGPARAM;
 
 	/* destroy all the children */
-	if (object->child_head) json_objectDestroy(object->child_head);
+	if (element->child_head) json_elementDestroy(element->child_head);
 
 	/* remove each sibling to either side */
-	if (object->sibling_prev) {
-		object->sibling_prev->sibling_next = NULL;
-		json_objectDestroy(object->sibling_prev);
+	if (element->sibling_prev) {
+		element->sibling_prev->sibling_next = NULL;
+		json_elementDestroy(element->sibling_prev);
 	}
-	if (object->sibling_next) {
-		object->sibling_next->sibling_prev = NULL;
-		json_objectDestroy(object->sibling_next);
+	if (element->sibling_next) {
+		element->sibling_next->sibling_prev = NULL;
+		json_elementDestroy(element->sibling_next);
 	}
 
 	/* finally, destroy us */
-	if (object->name) free(object->name);
-	switch (object->type) {
+	if (element->name) free(element->name);
+	switch (element->type) {
 		case JSON_STRING:
 		case JSON_FUNCTION:
-			if (object->data.asRaw) free(object->data.asRaw);
+			if (element->data.asRaw) free(element->data.asRaw);
 		default:;
 	}
-	free(object);
+	free(element);
 	
 	return JSON_ENONE;
 }
