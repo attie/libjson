@@ -131,6 +131,20 @@ int main(int argc, char *argv[]) {
 	}
 	printf("target->lat: %.12lf\n", value);
 	
+	/* how about deleting an element */
+	if ((ret = json_deleteElement(root, "results[1].location")) != JSON_ENONE) {
+		fprintf(stderr, "json_deleteElement() failed: %d\n", ret);
+		return 1;
+	}
+	/* see... */
+	if ((ret = json_print(json, &out, &outLen)) != JSON_ENONE) {
+		fprintf(stderr, "json_print() failed: %d\n", ret);
+		return 1;
+	}
+	printf("out:>\n%s<\n", out);
+	printf("outLen:%d\n", outLen);
+	free(out);
+
 	/* tidy up the json instance */
 	json_destroy(json);
 
