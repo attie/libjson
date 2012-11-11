@@ -86,6 +86,10 @@ json_err json_parseHandleItem(struct json *json) {
 	/* is it an integer/float? */
 	{	int i, d;
 		for (i = 0, d = 0; i < valueLen; i++) {
+			if (i == 0) {
+				/* allow a sign for the first character */
+				if (value[i] == '-' || value [i] == '+') continue;
+			}
 			if (value[i] == '.') {
 				d++;
 				continue;
