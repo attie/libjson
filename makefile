@@ -47,7 +47,7 @@ mrproper:
 		$${CMD}; \
 	done
 
-install: $(SYS_LIBDIR)/$(LIBNAME).so $(SYS_LIBDIR)/$(LIBNAME).a $(SYS_INCDIR)/httpd.h
+install: $(SYS_LIBDIR)/$(LIBNAME).so $(SYS_LIBDIR)/$(LIBNAME).a $(SYS_INCDIR)/json.h
 
 #--------#
 
