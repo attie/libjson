@@ -133,4 +133,6 @@ int main(int argc, char *argv[]) {
 	
 	/* tidy up the json instance */
 	json_destroy(json);
+
+	return 0;
 }
