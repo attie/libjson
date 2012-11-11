@@ -63,7 +63,7 @@ json_err json_bufImport(struct json_buf *buf, const unsigned char *data, unsigne
 	if (!buf || !data) return JSON_EMISSINGPARAM;
 	if (len == 0) return JSON_ENONE;
 	
-	if ((ret = json_bufSpace(buf, len)) != JSON_ENONE) return ret;
+	if ((ret = json_bufSpace(buf, len + 1)) != JSON_ENONE) return ret;
 	
 	memcpy(&(buf->data[buf->pos]), data, len);
 	buf->pos += len;
