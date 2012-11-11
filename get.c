@@ -110,7 +110,7 @@ EXPORT json_err json_getInteger(struct json_object *root, unsigned char *identif
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_getFloat(struct json_object *root, unsigned char *identifier, float *data) {
+EXPORT json_err json_getFloat(struct json_object *root, unsigned char *identifier, double *data) {
 	json_err ret;
 	struct json_object *target;
 

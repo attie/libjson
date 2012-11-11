@@ -82,7 +82,7 @@ struct json_object {
 	union {
 		unsigned char *asRaw;
 		int asInt;
-		float asFloat;
+		double asFloat;
 	} data;
 };
 

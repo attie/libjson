@@ -105,8 +105,8 @@ json_err json_parseHandleItem(struct json *json) {
 				goto taken;
 			} else if (d == 1) {
 				/* float! */
-				float v;
-				sscanf(value, "%f", &v);
+				double v;
+				sscanf(value, "%lf", &v);
 				if ((ret = json_addFloat(p->element, "", name, v)) != JSON_ENONE) return ret;
 				goto taken;
 			}

@@ -111,7 +111,7 @@ EXPORT json_err json_addInteger(struct json_object *root, unsigned char *parent,
 	return JSON_ENONE;
 }
 
-EXPORT json_err json_addFloat(struct json_object *root, unsigned char *parent, unsigned char *name, float data) {
+EXPORT json_err json_addFloat(struct json_object *root, unsigned char *parent, unsigned char *name, double data) {
 	json_err ret;
 	struct json_object *object;
 

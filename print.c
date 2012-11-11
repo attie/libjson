@@ -96,7 +96,7 @@ json_err _json_printInteger(struct json_print_ctx *ctx) {
 
 json_err _json_printFloat(struct json_print_ctx *ctx) {
 	if (!ctx || !ctx->root || !ctx->buf) return JSON_EMISSINGPARAM;
-	json_bufPrintf(ctx->buf, "%f", ctx->root->data.asFloat);
+	json_bufPrintf(ctx->buf, "%.12lf", ctx->root->data.asFloat);
 	return JSON_ENONE;
 }
 
