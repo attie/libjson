@@ -75,6 +75,8 @@ struct json_element {
 	struct json_element *sibling_next;
 	struct json_element *child_head;
 
+	void *user_data;
+
 	unsigned char *name;
 
 	enum json_dataTypes type;

@@ -80,6 +80,9 @@ EXPORT json_err json_addArray   (struct json_element *root, unsigned char *paren
 EXPORT json_err json_getType    (struct json_element *root, unsigned char *identifier, enum json_dataTypes *type);
 EXPORT json_err json_getChildren(struct json_element *root, unsigned char *identifier, unsigned char ***children);
 
+EXPORT json_err json_dataGet    (struct json_element *root, unsigned char *identifier, void **user_data);
+EXPORT json_err json_dataSet    (struct json_element *root, unsigned char *identifier, void *user_data);
+
 EXPORT json_err json_getBoolean (struct json_element *root, unsigned char *identifier, int *data);
 EXPORT json_err json_getInteger (struct json_element *root, unsigned char *identifier, int *data);
 EXPORT json_err json_getFloat   (struct json_element *root, unsigned char *identifier, double *data);
