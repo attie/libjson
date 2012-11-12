@@ -82,15 +82,24 @@ json_err json_parseHandleItem(struct json *json) {
 		if ((ret = json_addString(p->element, "", name, value, valueLen)) != JSON_ENONE) return ret;
 		goto taken;
 	}
-	
-	/* is it an integer/float? */
-	{	int i, d;
-		for (i = 0, d = 0; i < valueLen; i++) {
+	/* is it an integer/float/hex? */
+	{	int i, d, h;
+		for (i = 0, d = 0, h = 0; i < valueLen; i++) {
 			if (i == 0) {
 				/* allow a sign for the first character */
 				if (value[i] == '-' || value [i] == '+') continue;
+				/* remember if the first character is an '0' - looking for a hex value */
+				if (value[i] == '0') h++;
+			} else if (i == 1) {
+				/* allow the second character to be an 'x', only if the first was an '0' - looking for a hex value */
+				if (value[i] == 'x' || value[i] == 'X') {
+					if (h != 1) goto not_number;;
+					h++;
+					continue;
+				}
 			}
 			if (value[i] == '.') {
+				if (h == 2) goto not_number;
 				d++;
 				continue;
 			}
@@ -98,20 +107,32 @@ json_err json_parseHandleItem(struct json *json) {
 		}
 		if (i == valueLen) {
 			if (d == 0) {
-				/* integer! */
-				int v;
-				sscanf(value, "%d", &v);
-				if ((ret = json_addInteger(p->element, "", name, v)) != JSON_ENONE) return ret;
-				goto taken;
-			} else if (d == 1) {
+				if (h == 2) {
+					/* hex! -> integer */
+					int v;
+					value += 2;
+					valueLen -= 2;
+					if (sscanf(value, "%x", &v) != 1) return JSON_EINVAL;
+					if ((ret = json_addInteger(p->element, "", name, v)) != JSON_ENONE) return ret;
+					goto taken;
+				} else if (h == 0) {
+					/* integer! */
+					int v;
+					if (sscanf(value, "%d", &v) != 1) return JSON_EINVAL;
+					if ((ret = json_addInteger(p->element, "", name, v)) != JSON_ENONE) return ret;
+					goto taken;
+				}
+				goto not_number;
+			} else if (d == 1 && h < 2) {
 				/* float! */
 				double v;
-				sscanf(value, "%lf", &v);
+				if (sscanf(value, "%lf", &v) != 1) return JSON_EINVAL;
 				if ((ret = json_addFloat(p->element, "", name, v)) != JSON_ENONE) return ret;
 				goto taken;
 			}
 		}
 	}
+not_number:
 	
 	/* is it a null? */
 	if (!strncasecmp("null", value, 4)) {
@@ -127,6 +148,8 @@ json_err json_parseHandleItem(struct json *json) {
 		if ((ret = json_addBoolean(p->element, "", name, 0)) != JSON_ENONE) return ret;
 		goto taken;
 	}
+
+	return JSON_EINVAL;
 	
 taken:
 	name[nameLen] = c_name;
@@ -135,10 +158,9 @@ taken:
 	memset(&p->state, 0, sizeof(p->state));
 	for (; p->pos < p->buf.pos; p->pos++) {
 		c = p->buf.data[p->pos];
-		if (c == ',' || isspace(c)) continue;
-		break;
+		if (c != ',' && !isspace(c)) break;
 	}
-	
+
 	return JSON_ENONE;
 }
 
@@ -177,6 +199,8 @@ json_err json_parseGetName(struct json *json) {
 		}
 		if (s == -1 || p->state.q_name == 0) return JSON_EINCOMPLETE;
 		p->state.s_name = s;
+	} else {
+		s = p->state.s_name;
 	}
 	
 	for (; e == -1 && p->pos < p->buf.pos; p->pos++) {
@@ -187,6 +211,11 @@ json_err json_parseGetName(struct json *json) {
 			p->pos++;
 			break;
 		} else {
+			/* a ':' marks the end of the name */
+			if (c == ':') {
+				e = p->pos;
+				break;
+			}
 			/* first character of an unquoted identifier can't be a number */
 			if (p->pos == s && isdigit(c)) return JSON_EINVAL;
 			/* can't contain punctuation */
@@ -259,6 +288,8 @@ json_err json_parseGetValue(struct json *json) {
 		}
 		if (s == -1) return JSON_EINCOMPLETE;
 		p->state.s_value = s;
+	} else {
+		s = p->state.s_value;
 	}
 
 	for (; e == -1 && p->pos < p->buf.pos; p->pos++) {
