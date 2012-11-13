@@ -67,11 +67,15 @@ json_err json_parseHandleItem(struct json *json) {
 	if (!json) return JSON_EMISSINGPARAM;
 	p = &json->parse;
 	
-	name = &(p->buf.data[p->state.s_name]);
-	nameLen = p->state.e_name - p->state.s_name;
-	c_name = name[nameLen];
-	name[nameLen] = '\0';
-	
+	if (p->state.e_name == -2 || p->element->type == JSON_ARRAY) {
+		name = NULL;
+	} else {
+		name = &(p->buf.data[p->state.s_name]);
+		nameLen = p->state.e_name - p->state.s_name;
+		c_name = name[nameLen];
+		name[nameLen] = '\0';
+	}
+
 	value = &(p->buf.data[p->state.s_value]);
 	valueLen = p->state.e_value - p->state.s_value;
 	c_value = value[valueLen];
@@ -82,6 +86,7 @@ json_err json_parseHandleItem(struct json *json) {
 		if ((ret = json_addString(p->element, "", name, value, valueLen)) != JSON_ENONE) return ret;
 		goto taken;
 	}
+
 	/* is it an integer/float/hex? */
 	{	int i, d, h;
 		for (i = 0, d = 0, h = 0; i < valueLen; i++) {
@@ -96,6 +101,13 @@ json_err json_parseHandleItem(struct json *json) {
 					if (h != 1) goto not_number;;
 					h++;
 					continue;
+				}
+			} else if (i >= 2 && h == 2) {
+				switch (value[i]) {
+					case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
+					case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+						continue;
+					default:;
 				}
 			}
 			if (value[i] == '.') {
@@ -115,7 +127,7 @@ json_err json_parseHandleItem(struct json *json) {
 					if (sscanf(value, "%x", &v) != 1) return JSON_EINVAL;
 					if ((ret = json_addInteger(p->element, "", name, v)) != JSON_ENONE) return ret;
 					goto taken;
-				} else if (h == 0) {
+				} else if (h < 2) {
 					/* integer! */
 					int v;
 					if (sscanf(value, "%d", &v) != 1) return JSON_EINVAL;
@@ -149,10 +161,13 @@ not_number:
 		goto taken;
 	}
 
+	if (name) name[nameLen] = c_name;
+	value[valueLen] = c_value;
+
 	return JSON_EINVAL;
 	
 taken:
-	name[nameLen] = c_name;
+	if (name) name[nameLen] = c_name;
 	value[valueLen] = c_value;
 	
 	memset(&p->state, 0, sizeof(p->state));
@@ -194,6 +209,7 @@ json_err json_parseGetName(struct json *json) {
 			} else {
 				p->state.q_name = 1;
 				s = p->pos;
+				p->pos++;
 			}
 			break;
 		}
@@ -202,28 +218,36 @@ json_err json_parseGetName(struct json *json) {
 	} else {
 		s = p->state.s_name;
 	}
-	
-	for (; e == -1 && p->pos < p->buf.pos; p->pos++) {
-		c = p->buf.data[p->pos];
-		if (p->state.q_name == 2) {
-			if (p->buf.data[p->pos] != '"') continue;
-			e = p->pos;
-			p->pos++;
-			break;
-		} else {
-			/* a ':' marks the end of the name */
-			if (c == ':') {
+
+	if (p->element->type == JSON_ARRAY) {
+		e = -2;
+		p->state.i_colon = -2;
+		p->state.s_value = s;
+	} else {
+		for (; e == -1 && p->pos < p->buf.pos; p->pos++) {
+			c = p->buf.data[p->pos];
+			if (p->state.q_name == 2) {
+				if (p->buf.data[p->pos] != '"') continue;
 				e = p->pos;
+				p->pos++;
 				break;
-			}
-			/* first character of an unquoted identifier can't be a number */
-			if (p->pos == s && isdigit(c)) return JSON_EINVAL;
-			/* can't contain punctuation */
-			if (ispunct(c)) return JSON_EINVAL;
-			/* whitespace delimits the end of the identifier */
-			if (isspace(c)) {
-				e = p->pos;
-				break;
+			} else {
+				/* a ':' marks the end of the name */
+				if (c == ':') {
+					e = p->pos;
+					break;
+				}
+				/* first character of an unquoted identifier can't be a number */
+				if (p->pos == s && isdigit(c)) return JSON_EINVAL;
+				/* permit '_' */
+				if (c == '_') continue;
+				/* can't contain punctuation */
+				if (ispunct(c)) return JSON_EINVAL;
+				/* whitespace delimits the end of the identifier */
+				if (isspace(c)) {
+					e = p->pos;
+					break;
+				}
 			}
 		}
 	}
@@ -280,11 +304,12 @@ json_err json_parseGetValue(struct json *json) {
 				p->state.q_value = 2;
 				p->pos++;
 				s = p->pos;
-				break;
 			} else {
 				p->state.q_value = 1;
 				s = p->pos;
+				p->pos++;
 			}
+			break;
 		}
 		if (s == -1) return JSON_EINCOMPLETE;
 		p->state.s_value = s;
@@ -344,7 +369,7 @@ json_err json_parseRun(struct json *json) {
 		
 		if (prev_pos == p->pos) return JSON_EINCOMPLETE;
 		prev_pos = p->pos;
-		
+
 		if (!p->state.e_name) {
 			if ((ret = json_parseGetName(json)) != JSON_ENONE) return ret;
 		} else if (!p->state.i_colon) {
