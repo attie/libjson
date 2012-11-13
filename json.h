@@ -89,6 +89,7 @@ EXPORT json_err json_getFloat   (struct json_element *root, unsigned char *ident
 EXPORT json_err json_getString  (struct json_element *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
 EXPORT json_err json_getFunction(struct json_element *root, unsigned char *identifier, unsigned char **data, unsigned int *dataLen);
 EXPORT json_err json_getArrayLen(struct json_element *root, unsigned char *identifier, unsigned int *length);
+EXPORT json_err json_getArray   (struct json_element *root, unsigned char *identifier, struct json_element **target);
 EXPORT json_err json_getObject  (struct json_element *root, unsigned char *identifier, struct json_element **target);
 
 EXPORT json_err json_deleteElement(struct json_element *root, unsigned char *identifier);

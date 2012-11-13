@@ -160,6 +160,20 @@ EXPORT json_err json_getArrayLen(struct json_element *root, unsigned char *ident
 	return JSON_ENONE;
 }
 
+EXPORT json_err json_getArray(struct json_element *root, unsigned char *identifier, struct json_element **targetRet) {
+	json_err ret;
+	struct json_element *target;
+
+	if (!root || !identifier || !targetRet) return JSON_EMISSINGPARAM;
+	if ((ret = json_getElement(root, identifier, &target)) != JSON_ENONE) return ret;
+	if (!target) return JSON_EMISSING;
+	if (target->type != JSON_ARRAY) return JSON_ETYPEMISMATCH;
+
+	*targetRet = target;
+
+	return JSON_ENONE;
+}
+
 EXPORT json_err json_getObject(struct json_element *root, unsigned char *identifier, struct json_element **targetRet) {
 	json_err ret;
 	struct json_element *target;
