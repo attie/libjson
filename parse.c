@@ -223,6 +223,7 @@ json_err json_parseGetName(struct json *json) {
 		e = -2;
 		p->state.i_colon = -2;
 		p->state.s_value = s;
+		p->state.q_value = p->state.q_name;
 	} else {
 		for (; e == -1 && p->pos < p->buf.pos; p->pos++) {
 			c = p->buf.data[p->pos];
