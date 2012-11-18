@@ -48,7 +48,7 @@ json_err json_elementDestroy(struct json_element *element) {
 	/* destroy all the children */
 	if (element->child_head) json_elementDestroy(element->child_head);
 
-	/* remove each sibling to either side */
+	/* remove each sibling from either side */
 	if (element->sibling_prev) {
 		element->sibling_prev->sibling_next = NULL;
 		json_elementDestroy(element->sibling_prev);
