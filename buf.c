@@ -27,6 +27,7 @@
 
 #define BUF_EXPAND_SIZE 4096
 
+/* makes the whole buffer BUF_EXPAND_SIZE / 'extra' longer */
 json_err json_bufExpand(struct json_buf *buf) {
 	return json_bufnExpand(buf, BUF_EXPAND_SIZE);
 }
@@ -46,6 +47,7 @@ json_err json_bufnExpand(struct json_buf *buf, size_t extra) {
 	return JSON_ENONE;
 }
 
+/* ensures that there is at least 'extra' bytes after pos in the buffer */
 json_err json_bufSpace(struct json_buf *buf, size_t extra) {
 	unsigned int nBytes;
 
@@ -57,6 +59,7 @@ json_err json_bufSpace(struct json_buf *buf, size_t extra) {
 	return json_bufnExpand(buf, nBytes - buf->len);
 }
 
+/* copies 'len' bytes from 'data' into the buffer ad pos, and moves pos along */
 json_err json_bufImport(struct json_buf *buf, const unsigned char *data, unsigned int len) {
 	json_err ret;
 	
@@ -72,6 +75,7 @@ json_err json_bufImport(struct json_buf *buf, const unsigned char *data, unsigne
 	return JSON_ENONE;
 }
 
+/* printf() style writing to the buffer */
 json_err json_bufPrintf(struct json_buf *buf, const unsigned char *format, ...) {
 	json_err ret;
 	va_list ap;
@@ -116,6 +120,7 @@ json_err _json_bufvPrintf(struct json_buf *buf, const unsigned char *format, va_
 	return _json_bufvPrintf(buf, format, ap, 0);
 }
 
+/* trim the length of the buffer to 'pos' bytes (+1 for the '\0') */
 json_err json_bufTrim(struct json_buf *buf) {
 	unsigned char *nBuf;
 
