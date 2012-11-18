@@ -46,6 +46,7 @@ enum json_errors {
 	JSON_EPARENTISARRAY = -10,
 
 	JSON_EEXISTS = -11,
+	JSON_ENOROOT = -12,
 };
 typedef enum json_errors json_err;
 

@@ -193,6 +193,8 @@ json_err _json_printArray(struct json_print_ctx *ctx) {
 }
 
 EXPORT json_err json_print(struct json *json, unsigned char **output, unsigned int *outputLen) {
+	if (!json || !output || !outputLen) return JSON_EMISSINGPARAM;
+	if (!json->root) return JSON_ENOROOT;
 	return json_printElement(json->root, output, outputLen);
 }
 
